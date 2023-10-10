@@ -4,10 +4,24 @@ import {
   Typography,
   IconButton,
   ButtonGroup,
+  ToggleButton,
+  ToggleButtonGroup,
 } from '@mui/material'
 import SendIcon from '@mui/icons-material/Send'
+import { FormatBold, FormatItalic, FormatUnderlined } from '@mui/icons-material'
+
+import React, { useState } from 'react'
 
 export const MuiButton = () => {
+  const [textFormat, setTextFormat] = useState<string[]>([])
+  console.log(`textFormat:  ${textFormat}`)
+  const handleFormatChange = (
+    _: React.MouseEvent<HTMLElement>,
+    updatedFormats: string[]
+  ) => {
+    setTextFormat(updatedFormats)
+  }
+
   return (
     <Stack spacing={4}>
       <Stack spacing={2} direction={'row'}>
@@ -142,6 +156,25 @@ export const MuiButton = () => {
           <Button>Center</Button>
           <Button>End</Button>
         </ButtonGroup>
+      </Stack>
+
+      <Stack direction={'row'}>
+        <ToggleButtonGroup
+          aria-label='Text Formatting'
+          value={textFormat}
+          onChange={handleFormatChange}
+          // exclusive={true}
+        >
+          <ToggleButton value={'bold'} aria-label='bold'>
+            <FormatBold />
+          </ToggleButton>
+          <ToggleButton value={'italic'} aria-label='italic'>
+            <FormatItalic />
+          </ToggleButton>
+          <ToggleButton value={'underline'} aria-label='underline'>
+            <FormatUnderlined />
+          </ToggleButton>
+        </ToggleButtonGroup>
       </Stack>
     </Stack>
   )
