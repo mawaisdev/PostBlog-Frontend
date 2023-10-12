@@ -1,6 +1,5 @@
 import { Face } from '@mui/icons-material'
 import { Avatar, Chip, Stack } from '@mui/material'
-import { useState } from 'react'
 
 export const MuiChip = () => {
   return (
