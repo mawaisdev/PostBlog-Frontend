@@ -3,10 +3,3 @@ export interface GreetProps {
   count: number
   isLoggedIn: boolean
 }
-
-export interface PersonProps {
-  name: {
-    first: string
-    last: string
-  }
-}

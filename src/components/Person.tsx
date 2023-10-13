@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import { PersonProps } from './PropTypes/GreetProps'
+import { PersonProps } from './PropTypes/PersonProps'
 
 export const Person = ({ name }: PersonProps) => {
   return (
