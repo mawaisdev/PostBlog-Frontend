@@ -1,15 +1,13 @@
-import { Heading } from './components/Heading'
-import { Oscar } from './components/Oscar'
-import { Status } from './components/Status'
+import { Button } from './components/Button'
 
 function App() {
   return (
     <div className='App'>
-      <Status status='success' />
-      <Heading>Placeholder Text</Heading>
-      <Oscar>
-        <Heading>Oscar goes to london</Heading>
-      </Oscar>
+      <Button
+        handleClick={(event, id) => {
+          console.log(`clicked: ${id}`, event)
+        }}
+      />
     </div>
   )
 }
