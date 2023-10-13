@@ -1,9 +1,7 @@
 import { Box } from '@mui/material'
 import { GreetProps } from './PropTypes/GreetProps'
 
-export function Greet(props: GreetProps) {
-  console.log({ props })
-
+export function Greet({ name, count, isLoggedIn }: GreetProps) {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
       <Box
@@ -13,7 +11,9 @@ export function Greet(props: GreetProps) {
           border: '1px solid black',
         }}
       >
-        Hello {props.name}. You have 10 Unread Mails.
+        {isLoggedIn
+          ? `Hello ${name}. You have ${count} Unread Mails.`
+          : `Hello. Please Login.`}
       </Box>
     </Box>
   )
