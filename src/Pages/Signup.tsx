@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import {
   Button,
   TextField,
@@ -10,33 +9,6 @@ import {
 } from '@mui/material'
 
 function SignUpPage() {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    userName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  })
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target
-    setFormData((prevState) => ({ ...prevState, [name]: value }))
-  }
-
-  const handleSignUp = () => {
-    // Client-side confirmPassword validation
-    if (formData.password !== formData.confirmPassword) {
-      console.log("Passwords don't match!")
-      return
-    }
-    // Remove confirmPassword before sending to the server
-    const { confirmPassword, ...dataToSend } = formData
-
-    // TODO: Send dataToSend to the server for signup
-    console.log(dataToSend)
-  }
-
   return (
     <Box
       display='flex'
@@ -57,8 +29,6 @@ function SignUpPage() {
               id='firstName'
               label='First Name'
               name='firstName'
-              value={formData.firstName}
-              onChange={handleChange}
             />
           </Grid>
           <Grid item xs={6}>
@@ -69,8 +39,6 @@ function SignUpPage() {
               id='lastName'
               label='Last Name'
               name='lastName'
-              value={formData.lastName}
-              onChange={handleChange}
             />
           </Grid>
         </Grid>
@@ -81,8 +49,6 @@ function SignUpPage() {
           id='userName'
           label='Username'
           name='userName'
-          value={formData.userName}
-          onChange={handleChange}
         />
         <TextField
           variant='outlined'
@@ -91,8 +57,6 @@ function SignUpPage() {
           id='email'
           label='Email Address'
           name='email'
-          value={formData.email}
-          onChange={handleChange}
         />
         <TextField
           variant='outlined'
@@ -102,8 +66,6 @@ function SignUpPage() {
           label='Password'
           type='password'
           id='password'
-          value={formData.password}
-          onChange={handleChange}
         />
         <TextField
           variant='outlined'
@@ -113,20 +75,17 @@ function SignUpPage() {
           label='Confirm Password'
           type='password'
           id='confirmPassword'
-          value={formData.confirmPassword}
-          onChange={handleChange}
         />
         <Button
           fullWidth
           variant='contained'
           color='primary'
           style={{ margin: '24px 0' }}
-          onClick={handleSignUp}
         >
           Sign Up
         </Button>
         <Box textAlign='center'>
-          <Link href='login' variant='body2'>
+          <Link href='/login' variant='body2'>
             Already have an account?
           </Link>
         </Box>

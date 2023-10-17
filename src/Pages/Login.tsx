@@ -1,29 +1,6 @@
-import React, { useState } from 'react'
 import { Button, Paper, TextField, Link, Box, Typography } from '@mui/material'
 
 function LoginPage() {
-  const [credentials, setCredentials] = useState({
-    userName: '',
-    password: '',
-  })
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(typeof event)
-    const { name, value } = event.target
-    setCredentials((prevState) => ({ ...prevState, [name]: value }))
-  }
-
-  const handleLogin = () => {
-    if (
-      credentials.userName === 'waqas9' &&
-      credentials.password === 'Waqas123'
-    ) {
-      console.log('Successfully logged in!')
-    } else {
-      console.log('Invalid credentials')
-    }
-  }
-
   return (
     <Box
       display='flex'
@@ -42,8 +19,6 @@ function LoginPage() {
           id='userName'
           label='Username'
           name='userName'
-          value={credentials.userName}
-          onChange={handleChange}
         />
         <TextField
           variant='outlined'
@@ -53,15 +28,12 @@ function LoginPage() {
           label='Password'
           type='password'
           id='password'
-          value={credentials.password}
-          onChange={handleChange}
         />
         <Button
           fullWidth
           variant='contained'
           color='primary'
           style={{ margin: '24px 0' }}
-          onClick={handleLogin}
         >
           Login
         </Button>
