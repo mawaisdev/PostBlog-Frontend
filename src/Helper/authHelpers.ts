@@ -1,12 +1,13 @@
 import axios from 'axios'
 import { AuthResponse } from '../Types/Responses/AuthResponse'
 
+const BASEURL = import.meta.env.VITE_BASE_URL
+
 export const loginUser = async (
   email: string,
   password: string
 ): Promise<AuthResponse> => {
-  // Replace with your actual login endpoint
-  const response = await axios.post<AuthResponse>('/api/login', {
+  const response = await axios.post<AuthResponse>(`${BASEURL}/auth/login`, {
     email,
     password,
   })
@@ -18,8 +19,7 @@ export const signupUser = async (
   password: string,
   userName: string
 ): Promise<AuthResponse> => {
-  // Replace with your actual signup endpoint
-  const response = await axios.post<AuthResponse>('/api/signup', {
+  const response = await axios.post<AuthResponse>(`${BASEURL}/auth/signup`, {
     email,
     password,
     userName,
