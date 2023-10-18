@@ -2,7 +2,7 @@ import { Button, Paper, TextField, Box, Typography } from '@mui/material'
 import { UseFormReturn, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { loginData, loginSchema } from '../Types/Schema/LoginSchema'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 import LoadingSnackbarComponent from '../Components/LoadingSnackbar'
 import { loginUser } from '../Helper/authHelpers'
@@ -14,6 +14,8 @@ function LoginPage() {
   const [message, setMessage] = useState<string>('')
   const { setAuthState } = useAuth() // Get the setAuthState from your context
   const navigate = useNavigate() // Get the navigate function from react-router
+  const location = useLocation() // Get the location object from react-router
+  const from = location.state?.from?.pathname || '/dashboard' // Get the previous path from location.state.from.pathname
 
   const {
     register,
@@ -36,7 +38,7 @@ function LoginPage() {
             token,
             user: userData,
           })
-          navigate('/dashboard')
+          navigate(from, { replace: true })
           setIsSubmitting(false)
           setMessage('')
         }
@@ -51,7 +53,8 @@ function LoginPage() {
       } else {
         if (
           error?.response?.data?.status === 401 ||
-          error?.response?.data?.status === 400
+          error?.response?.data?.status === 400 ||
+          error?.response?.data?.status === 404
         ) {
           setMessage('Invalid Credentials')
           setTimeout(() => {
