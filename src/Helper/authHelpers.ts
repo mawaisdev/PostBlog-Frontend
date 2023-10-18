@@ -1,28 +1,51 @@
-import axios from 'axios'
 import { AuthResponse } from '../Types/Responses/AuthResponse'
+import { SignupData } from '../Types/Schema/SignupSchema'
+import { loginData } from '../Types/Schema/LoginSchema'
 
-const BASEURL = import.meta.env.VITE_BASE_URL
+const REGISTER_URL = '/auth/signup'
+const LOGIN_URL = '/auth/login'
+import axios from '../Api/axios'
 
-export const loginUser = async (
-  email: string,
-  password: string
-): Promise<AuthResponse> => {
-  const response = await axios.post<AuthResponse>(`${BASEURL}/auth/login`, {
-    email,
-    password,
-  })
+export const loginUser = async ({
+  userName,
+  password,
+}: loginData): Promise<AuthResponse> => {
+  const response = await axios.post<AuthResponse>(
+    LOGIN_URL,
+    JSON.stringify({ userName, password }),
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        withCredentials: true,
+      },
+    }
+  )
   return response.data
 }
 
-export const signupUser = async (
-  email: string,
-  password: string,
-  userName: string
-): Promise<AuthResponse> => {
-  const response = await axios.post<AuthResponse>(`${BASEURL}/auth/signup`, {
-    email,
-    password,
-    userName,
-  })
+export const signupUser = async ({
+  email,
+  password,
+  firstName,
+  lastName,
+  userName,
+}: SignupData): Promise<AuthResponse> => {
+  const response = await axios.post<AuthResponse>(
+    REGISTER_URL,
+    JSON.stringify({
+      firstName,
+      lastName,
+      userName,
+      email,
+      password,
+      role: 'User',
+    }),
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        withCredentials: true,
+      },
+    }
+  )
   return response.data
 }
