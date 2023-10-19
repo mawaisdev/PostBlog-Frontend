@@ -11,8 +11,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     user: null,
   })
 
+  const [persistState, setPersistState] = useState<boolean>(
+    JSON.parse(localStorage.getItem('persistState') || 'false')
+  )
+
   return (
-    <AuthContext.Provider value={{ ...authState, setAuthState }}>
+    <AuthContext.Provider
+      value={{
+        ...authState,
+        setAuthState,
+        persistState,
+        setPersistState,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )
