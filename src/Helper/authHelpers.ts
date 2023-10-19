@@ -16,8 +16,8 @@ export const loginUser = async ({
     {
       headers: {
         'Content-Type': 'application/json',
-        withCredentials: true,
       },
+      withCredentials: true,
     }
   )
   return response.data
@@ -38,13 +38,13 @@ export const signupUser = async ({
       userName,
       email,
       password,
-      role: 'User',
+      role: 'Admin',
     }),
     {
       headers: {
         'Content-Type': 'application/json',
-        withCredentials: true,
       },
+      withCredentials: true,
     }
   )
   return response.data
