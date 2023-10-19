@@ -14,14 +14,3 @@ export const RequireAuth = ({ roles }: RequireAuthProps) => {
     <Navigate to='/login' state={{ from: location }} replace />
   )
 }
-
-export const RequireNoAuth = () => {
-  const { token } = useAuth()
-  const location = useLocation()
-
-  return !token ? (
-    <Outlet />
-  ) : (
-    <Navigate to='/' state={{ from: location }} replace />
-  )
-}
