@@ -7,6 +7,7 @@ import { RequireAuth, RequireNoAuth } from './Components/ControllAuthRoutes'
 import Layout from './Routes/Layout'
 import { Dashboard } from './Pages/DashboardPage'
 import { UnauthorizedPage } from './Pages/UnauthorizedPage'
+import { Categories } from './Components/Categories'
 
 const App = () => {
   return (
@@ -23,12 +24,12 @@ const App = () => {
 
         {/* Private Routes for Admin Here*/}
         <Route element={<RequireAuth roles={['Admin']} />}>
-          <Route path='/category' element={<Dashboard />} />
+          <Route path='/category' element={<Categories />} />
         </Route>
 
         {/* Private Routes for User Here*/}
         <Route element={<RequireAuth roles={['User']} />}>
-          <Route path='/profile' element={<Dashboard />} />
+          <Route path='/profile' element={<h1>Profile</h1>} />
         </Route>
 
         {/* Private Routes for Both Admin and User Here*/}
