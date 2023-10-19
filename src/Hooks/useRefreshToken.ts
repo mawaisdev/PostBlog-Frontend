@@ -1,5 +1,6 @@
 import axios from '../Api/axios'
 import { RefreshTokenResponse } from '../Types/Responses/Auth/RefreshTokenResponse'
+import { User } from '../Types/Responses/User'
 import { useAuth } from './useAuth'
 
 export const useRefreshToken = () => {
@@ -16,7 +17,13 @@ export const useRefreshToken = () => {
     )
 
     setAuthState((prevState) => {
-      return { ...prevState, token: data.token }
+      const user: User = {
+        email: prevState.user?.email || '',
+        userName: prevState.user?.userName || '',
+        id: prevState.user?.id || 0,
+        roles: data.roles,
+      }
+      return { ...prevState, user: user, token: data.token }
     })
     return data.token
   }
