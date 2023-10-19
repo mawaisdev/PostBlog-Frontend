@@ -1,9 +1,15 @@
 import { Button, Container, Stack } from '@mui/material'
 import { useAuth } from '../Hooks/useAuth'
 import { Link } from 'react-router-dom'
+import { useLogout } from '../Hooks/useLogout'
 
 export const Dashboard = () => {
   const { user } = useAuth()
+  const logout = useLogout()
+
+  const handleLogout = async () => {
+    await logout()
+  }
 
   return (
     <Container>
@@ -22,6 +28,9 @@ export const Dashboard = () => {
         <Link to='/' style={{ color: 'primary', textDecoration: 'none' }}>
           Posts
         </Link>
+      </Button>
+      <Button variant='outlined' onClick={handleLogout}>
+        Logout
       </Button>
     </Container>
   )
