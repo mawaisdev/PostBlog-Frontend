@@ -29,8 +29,7 @@ function LoginPage() {
     setIsSubmitting(true)
     setMessage('Logging in...')
     try {
-      const { userData, token, errors, status } = await loginUser(data)
-      console.log({ userData }, { token }, { errors }, { status })
+      const { userData, token, status } = await loginUser(data)
 
       if (status === 201) {
         if (token && userData) {
