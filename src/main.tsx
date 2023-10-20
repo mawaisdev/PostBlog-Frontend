@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './Contexts/AuthContext.tsx'
 
 import { disableReactDevTools } from '@fvilers/disable-react-devtools'
+import MyAppBar from './Components/Navbar.tsx'
 
 if (process.env.NODE_ENV === 'production') {
   disableReactDevTools()
@@ -15,6 +16,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Router>
       <AuthProvider>
+        <MyAppBar />
         <Routes>
           <Route path='/*' element={<App />} />
         </Routes>
