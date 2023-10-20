@@ -8,6 +8,7 @@ import Layout from './Routes/Layout'
 import { Dashboard } from './Pages/DashboardPage'
 import { UnauthorizedPage } from './Pages/UnauthorizedPage'
 import { Categories } from './Components/Categories'
+import { PersistLogin } from './Components/PersistLogin'
 
 const App = () => {
   return (
@@ -20,18 +21,20 @@ const App = () => {
         <Route path='/signup' element={<SignUpPage />} />
 
         {/* Private Routes for Admin Here*/}
-        <Route element={<RequireAuth roles={['Admin']} />}>
-          <Route path='/category' element={<Categories />} />
-        </Route>
+        <Route element={<PersistLogin />}>
+          <Route element={<RequireAuth roles={['Admin']} />}>
+            <Route path='/category' element={<Categories />} />
+          </Route>
 
-        {/* Private Routes for User Here*/}
-        <Route element={<RequireAuth roles={['User']} />}>
-          <Route path='/profile' element={<h1>Profile</h1>} />
-        </Route>
+          {/* Private Routes for User Here*/}
+          <Route element={<RequireAuth roles={['User']} />}>
+            <Route path='/profile' element={<h1>Profile</h1>} />
+          </Route>
 
-        {/* Private Routes for Both Admin and User Here*/}
-        <Route element={<RequireAuth roles={['User', 'Admin']} />}>
-          <Route path='/dashboard' element={<Dashboard />} />
+          {/* Private Routes for Both Admin and User Here*/}
+          <Route element={<RequireAuth roles={['User', 'Admin']} />}>
+            <Route path='/dashboard' element={<Dashboard />} />
+          </Route>
         </Route>
       </Route>
 

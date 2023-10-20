@@ -1,9 +1,17 @@
-import { Button, Paper, TextField, Box, Typography } from '@mui/material'
+import {
+  Button,
+  Paper,
+  TextField,
+  Box,
+  Typography,
+  Checkbox,
+  Stack,
+} from '@mui/material'
 import { UseFormReturn, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { loginData, loginSchema } from '../Types/Schema/LoginSchema'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import LoadingSnackbarComponent from '../Components/LoadingSnackbar'
 import { loginUser } from '../Helper/authHelpers'
 import { AxiosError } from 'axios'
@@ -12,7 +20,7 @@ import { useAuth } from '../Hooks/useAuth'
 function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [message, setMessage] = useState<string>('')
-  const { setAuthState } = useAuth() // Get the setAuthState from your context
+  const { setAuthState, persistState, setPersistState } = useAuth() // Get the setAuthState from your context
   const navigate = useNavigate() // Get the navigate function from react-router
   const location = useLocation() // Get the location object from react-router
   const from = location.state?.from?.pathname || '/dashboard' // Get the previous path from location.state.from.pathname
@@ -24,6 +32,14 @@ function LoginPage() {
   }: UseFormReturn<loginData> = useForm<loginData>({
     resolver: yupResolver(loginSchema),
   })
+
+  const handleChange = () => {
+    setPersistState(!persistState)
+  }
+
+  useEffect(() => {
+    localStorage.setItem('persistState', JSON.stringify(persistState))
+  }, [persistState])
 
   const onSubmit = async (data: loginData): Promise<void> => {
     setIsSubmitting(true)
@@ -109,6 +125,19 @@ function LoginPage() {
             autoComplete='off'
             required
           />
+          {/* <FormControlLabel
+            control={<Checkbox {...register('rememberMe')} color='primary' />}
+            label='Remember me'
+          /> */}
+          <Stack direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
+            <Checkbox
+              {...register('rememberMe')}
+              checked={persistState}
+              onChange={handleChange}
+              color='primary'
+            />
+            <Typography variant='body2'>Remember me</Typography>
+          </Stack>
           <Button
             fullWidth
             variant='contained'
