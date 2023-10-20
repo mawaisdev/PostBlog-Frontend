@@ -33,15 +33,12 @@ function LoginPage() {
     resolver: yupResolver(loginSchema),
   })
 
-  const handleChange = () => {
-    setPersistState(!persistState)
-  }
-
   useEffect(() => {
     localStorage.setItem('persistState', JSON.stringify(persistState))
   }, [persistState])
 
   const onSubmit = async (data: loginData): Promise<void> => {
+    setPersistState(data.rememberMe)
     setIsSubmitting(true)
     setMessage('Logging in...')
     try {
@@ -132,8 +129,8 @@ function LoginPage() {
           <Stack direction='row' sx={{ display: 'flex', alignItems: 'center' }}>
             <Checkbox
               {...register('rememberMe')}
-              checked={persistState}
-              onChange={handleChange}
+              // checked={persistState}
+              // onChange={handleChange}
               color='primary'
             />
             <Typography variant='body2'>Remember me</Typography>
