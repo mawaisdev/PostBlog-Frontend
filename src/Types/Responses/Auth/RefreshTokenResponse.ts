@@ -1,6 +1,8 @@
+import { User } from '../User'
+
 export interface RefreshTokenResponse {
   status: number
   errors: string[]
   token: string
-  roles: 'Admin' | 'User'
+  userData: User
 }
