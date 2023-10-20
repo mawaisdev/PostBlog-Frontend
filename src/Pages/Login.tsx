@@ -38,7 +38,6 @@ function LoginPage() {
   }, [persistState])
 
   const onSubmit = async (data: loginData): Promise<void> => {
-    setPersistState(data.rememberMe)
     setIsSubmitting(true)
     setMessage('Logging in...')
     try {
@@ -50,6 +49,8 @@ function LoginPage() {
             token,
             user: userData,
           })
+          setPersistState(data.rememberMe)
+
           navigate(from, { replace: true })
           setIsSubmitting(false)
           setMessage('')
