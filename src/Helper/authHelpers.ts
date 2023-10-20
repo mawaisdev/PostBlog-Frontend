@@ -38,7 +38,7 @@ export const signupUser = async ({
       userName,
       email,
       password,
-      role: 'Admin',
+      role: 'User',
     }),
     {
       headers: {
