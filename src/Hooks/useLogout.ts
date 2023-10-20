@@ -4,10 +4,11 @@ import { AuthState } from '../Types/Context/Auth/AuthState'
 import { useAuth } from './useAuth'
 
 export const useLogout = () => {
-  const { setAuthState } = useAuth()
+  const { setAuthState, setPersistState } = useAuth()
 
   const logout = async () => {
     setAuthState({} as AuthState)
+    setPersistState(false)
 
     try {
       const {} = await axios.get('/auth/logout', {

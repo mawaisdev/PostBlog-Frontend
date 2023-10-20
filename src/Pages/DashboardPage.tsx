@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { useLogout } from '../Hooks/useLogout'
 
 export const Dashboard = () => {
-  const { user } = useAuth()
+  const { user, persistState, token } = useAuth()
   const logout = useLogout()
 
   const handleLogout = async () => {
@@ -14,7 +14,9 @@ export const Dashboard = () => {
   return (
     <Container>
       <Stack direction={'row'} spacing={4} mb={4}>
-        User: {user?.userName} || Email: {user?.email} || Roles: {user?.roles}
+        User: {user?.userName} || Email: {user?.email} || Roles: {user?.roles}{' '}
+        || Token: {token ? 'Yes' : 'No'} || || Remember Me:
+        {persistState ? 'Yes' : 'No'}
       </Stack>
       <Button variant='outlined'>
         <Link
