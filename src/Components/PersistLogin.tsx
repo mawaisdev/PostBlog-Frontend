@@ -7,7 +7,7 @@ import { AxiosError } from 'axios'
 export const PersistLogin = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const refresh = useRefreshToken()
-  const { token, persistState } = useAuth()
+  const { token, persistState, setPersistState } = useAuth()
 
   useEffect(() => {
     let isMounted = true
@@ -16,7 +16,7 @@ export const PersistLogin = () => {
       try {
         await refresh()
       } catch (error: AxiosError | any) {
-        console.log(error)
+        setPersistState((prev) => !prev)
       } finally {
         isMounted && setIsLoading(false)
       }

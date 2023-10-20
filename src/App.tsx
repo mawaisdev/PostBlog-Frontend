@@ -3,7 +3,7 @@ import { Home } from './Pages/Home'
 import SignUpPage from './Pages/Signup'
 import LoginPage from './Pages/Login'
 import NotFound404 from './Pages/Missing'
-import { RequireAuth } from './Components/ControllAuthRoutes'
+import { RequireAuth, RequireNoAuth } from './Components/ControllAuthRoutes'
 import Layout from './Routes/Layout'
 import { Dashboard } from './Pages/DashboardPage'
 import { UnauthorizedPage } from './Pages/UnauthorizedPage'
@@ -16,9 +16,10 @@ const App = () => {
       <Route path='/' element={<Layout />}>
         {/* Public Routes Here*/}
         <Route path='/' element={<Home />} />
-        <Route path='/unauthorized' element={<UnauthorizedPage />} />
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/signup' element={<SignUpPage />} />
+        <Route element={<RequireNoAuth />}>
+          <Route path='/login' element={<LoginPage />} />
+          <Route path='/signup' element={<SignUpPage />} />
+        </Route>
 
         {/* Private Routes for Admin Here*/}
         <Route element={<PersistLogin />}>
@@ -34,6 +35,7 @@ const App = () => {
           {/* Private Routes for Both Admin and User Here*/}
           <Route element={<RequireAuth roles={['User', 'Admin']} />}>
             <Route path='/dashboard' element={<Dashboard />} />
+            <Route path='/unauthorized' element={<UnauthorizedPage />} />
           </Route>
         </Route>
       </Route>

@@ -14,3 +14,14 @@ export const RequireAuth = ({ roles }: RequireAuthProps) => {
     <Navigate to='/login' state={{ from: location }} replace />
   )
 }
+
+export const RequireNoAuth = () => {
+  const location = useLocation()
+  const persistState = localStorage.getItem('persistState')
+
+  return persistState && persistState === 'true' ? (
+    <Navigate to='/dashboard' state={{ from: location }} replace />
+  ) : (
+    <Outlet />
+  )
+}

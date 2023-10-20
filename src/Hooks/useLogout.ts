@@ -8,6 +8,8 @@ export const useLogout = () => {
 
   const logout = async () => {
     setAuthState({} as AuthState)
+    localStorage.setItem('persistState', 'false')
+
     setPersistState(false)
 
     try {
