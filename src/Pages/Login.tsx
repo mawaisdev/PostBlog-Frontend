@@ -50,6 +50,8 @@ function LoginPage() {
             token,
             user: userData,
           })
+          setPersistState(data.rememberMe)
+
           navigate(from, { replace: true })
           setIsSubmitting(false)
           setMessage('')
