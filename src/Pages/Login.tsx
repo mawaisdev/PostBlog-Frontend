@@ -38,9 +38,9 @@ function LoginPage() {
   }, [persistState])
 
   const onSubmit = async (data: loginData): Promise<void> => {
-    setPersistState(data.rememberMe)
     setIsSubmitting(true)
     setMessage('Logging in...')
+    setPersistState(data.rememberMe)
     try {
       const { userData, token, status } = await loginUser(data)
 

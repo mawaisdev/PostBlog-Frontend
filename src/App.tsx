@@ -7,8 +7,10 @@ import { RequireAuth, RequireNoAuth } from './Components/ControllAuthRoutes'
 import Layout from './Routes/Layout'
 import { Dashboard } from './Pages/DashboardPage'
 import { UnauthorizedPage } from './Pages/UnauthorizedPage'
-import { Categories } from './Components/Categories'
+import { Categories } from './Pages/Categories'
 import { PersistLogin } from './Components/PersistLogin'
+import { ProfilePage } from './Pages/ProfilePage'
+import { SettingsPage } from './Pages/SettingsPage'
 
 const App = () => {
   return (
@@ -35,6 +37,8 @@ const App = () => {
           {/* Private Routes for Both Admin and User Here*/}
           <Route element={<RequireAuth roles={['User', 'Admin']} />}>
             <Route path='/dashboard' element={<Dashboard />} />
+            <Route path='/profile' element={<ProfilePage />} />
+            <Route path='/settings' element={<SettingsPage />} />
             <Route path='/unauthorized' element={<UnauthorizedPage />} />
           </Route>
         </Route>

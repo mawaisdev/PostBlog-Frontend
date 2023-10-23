@@ -12,7 +12,7 @@ export const Dashboard = () => {
   }
 
   return (
-    <Container>
+    <Container sx={{ mt: '2 rem' }}>
       <Stack direction={'row'} spacing={4} mb={4}>
         User: {user?.userName} || Email: {user?.email} || Roles: {user?.roles}{' '}
         || Token: {token ? 'Yes' : 'No'} || || Remember Me:
