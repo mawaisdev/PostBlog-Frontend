@@ -75,8 +75,8 @@ export const CategoriesPage = () => {
       <Grid item xs={12}>
         <Paper
           sx={{
-            height: { xs: '30vh', md: '50vh' }, // Adjust height for different screen sizes
-            backgroundColor: 'grey.800',
+            height: { xs: '30vh', md: '40vh' }, // Adjust height for different screen sizes
+            backgroundColor: 'grey.700',
           }}
         >
           {/* Empty Dark Colored Box */}
