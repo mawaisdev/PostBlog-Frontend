@@ -1,4 +1,5 @@
-import { Grid, Paper, TextField, Button, Typography, Box } from '@mui/material'
+import { Grid, Paper } from '@mui/material'
+import { CreateCategory } from '../Components/CreateCategory'
 
 export const CategoriesPage = () => {
   return (
@@ -28,45 +29,7 @@ export const CategoriesPage = () => {
               gap: { xs: 1, md: 2 },
             }}
           >
-            <Typography
-              variant='h5'
-              sx={{
-                alignSelf: 'center',
-                width: { xs: '60%', md: '20vh' },
-                height: '5vh',
-                textAlign: 'center',
-              }}
-            >
-              Create Category
-            </Typography>
-
-            <TextField label='Category Name' variant='outlined' fullWidth />
-            <TextField
-              label='Category Description'
-              variant='outlined'
-              fullWidth
-            />
-
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                width: '100%',
-                mt: 2,
-              }}
-            >
-              <Button
-                variant='outlined'
-                size='large'
-                sx={{
-                  width: { xs: '80%', md: '30vh' },
-                  height: '5vh',
-                }}
-                color='primary'
-              >
-                Create Category
-              </Button>
-            </Box>
+            <CreateCategory />
           </Paper>
         </Grid>
       </Grid>
