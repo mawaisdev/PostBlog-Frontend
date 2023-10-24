@@ -1,18 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { Container } from '@mui/material'
 import { Category } from '../Types/Responses/Category/Category'
 import { CategoryAllResponse } from '../Types/Responses/Category/CategoryAll'
-import { useAxiosPrivate } from '../Hooks/useAxiosPrivate'
-import { useLocation, useNavigate } from 'react-router-dom'
 import { AxiosError } from 'axios'
-import { useAuth } from '../Hooks/useAuth'
-import { AuthState } from '../Types/Context/Auth/AuthState'
-export const Categories = () => {
-  const [categories, setCategories] = useState<Category[]>({} as Category[])
-  const axiosPrivate = useAxiosPrivate()
-  const { setAuthState } = useAuth()
-  const location = useLocation()
+import { useAxiosPrivate } from '../Hooks/useAxiosPrivate'
+import MemoizedCategoryTable from '../Components/TableComponent'
 
-  const navigate = useNavigate()
+const Categories = () => {
+  const axiosPrivate = useAxiosPrivate()
+  const [categories, setCategories] = useState<Category[]>([]) // sample categories array
 
   useEffect(() => {
     let isMounted = true
@@ -28,12 +24,7 @@ export const Categories = () => {
           }
         )
         isMounted && setCategories(data.data)
-      } catch (error: AxiosError | any) {
-        if (error?.response?.data?.status === 403) {
-          setAuthState({} as AuthState)
-          navigate('/login', { state: { from: location } })
-        }
-      }
+      } catch (error: AxiosError | any) {}
     }
 
     getCategories()
@@ -44,18 +35,24 @@ export const Categories = () => {
     }
   }, [])
 
+  const headings = ['ID', 'Name', 'Description']
+
+  const handleUpdate = (category: Category) => {
+    console.log('Update category with ID:', category)
+  }
+
+  const handleDelete = (category: Category) => {
+    console.log('Delete category with ID:', category)
+  }
   return (
-    <article>
-      <h2>Categories List</h2>
-      {categories?.length ? (
-        <ul>
-          {categories.map(({ id, name }) => (
-            <li key={id}>{name}</li>
-          ))}
-        </ul>
-      ) : (
-        <p>No Categories Found</p>
-      )}
-    </article>
+    <Container sx={{ mt: 1, display: 'flex' }}>
+      <MemoizedCategoryTable
+        categories={categories}
+        headings={headings}
+        actions={{ onUpdate: handleUpdate, onDelete: handleDelete }}
+      />
+    </Container>
   )
 }
+
+export { Categories }

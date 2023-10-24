@@ -20,6 +20,8 @@ export const useRefreshToken = () => {
         token: data.token,
       }
     })
+
+    localStorage.setItem('authToken', data.token)
     return data.token
   }
   return refresh

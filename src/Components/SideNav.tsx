@@ -13,10 +13,6 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import { useNavigate } from 'react-router-dom'
 import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
-import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined'
-import DashboardCustomizeOutlinedIcon from '@mui/icons-material/DashboardCustomizeOutlined'
 
 import { NavListItem } from './NavListItem'
 import { useLogout } from '../Hooks/useLogout'
@@ -24,7 +20,14 @@ import { SideNavProps } from '../Types/Props/SideNavProps'
 import { AppBarProps } from '../Types/Props/AppBarProps'
 import { Drawer } from '../StyledComponents/Drawer'
 import { useAuth } from '../Hooks/useAuth'
-import { LoginOutlined, LogoutOutlined } from '@mui/icons-material'
+import {
+  AccountCircleOutlined,
+  CategoryOutlined,
+  DashboardCustomizeOutlined,
+  LoginOutlined,
+  LogoutOutlined,
+  SettingsOutlined,
+} from '@mui/icons-material'
 
 enum MenuItems {
   Dashboard = 'Dashboard',
@@ -128,35 +131,40 @@ export const SideNav = ({ children }: SideNavProps) => {
           <List>
             <NavListItem
               open={open}
-              icon={<DashboardCustomizeOutlinedIcon />}
-              heading={MenuItems.Dashboard}
-              handleClick={() => navigate('/dashboard')}
-            />
-            <NavListItem
-              open={open}
               icon={<SubtitlesOutlinedIcon />}
               heading={MenuItems.Posts}
               handleClick={() => navigate('/')}
             />
-            <NavListItem
-              open={open}
-              icon={<CategoryOutlinedIcon />}
-              heading={MenuItems.Categories}
-              handleClick={() => navigate('/category')}
-            />
-            <Divider />
-            <NavListItem
-              open={open}
-              icon={<AccountCircleOutlinedIcon />}
-              heading={MenuItems.Profile}
-              handleClick={() => navigate('/profile')}
-            />
-            <NavListItem
-              open={open}
-              icon={<SettingsOutlinedIcon />}
-              heading={MenuItems.Settings}
-              handleClick={() => navigate('/settings')}
-            />
+            {token ? (
+              <>
+                <NavListItem
+                  open={open}
+                  icon={<DashboardCustomizeOutlined />}
+                  heading={MenuItems.Dashboard}
+                  handleClick={() => navigate('/dashboard')}
+                />
+                <NavListItem
+                  open={open}
+                  icon={<CategoryOutlined />}
+                  heading={MenuItems.Categories}
+                  handleClick={() => navigate('/category')}
+                />
+
+                <Divider />
+                <NavListItem
+                  open={open}
+                  icon={<AccountCircleOutlined />}
+                  heading={MenuItems.Profile}
+                  handleClick={() => navigate('/profile')}
+                />
+                <NavListItem
+                  open={open}
+                  icon={<SettingsOutlined />}
+                  heading={MenuItems.Settings}
+                  handleClick={() => navigate('/settings')}
+                />
+              </>
+            ) : null}
           </List>
           <Divider />
           <NavListItem
