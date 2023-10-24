@@ -1,20 +1,29 @@
-// import { Box, Button, Container } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
-
-import { Box, Button, Container } from '@mui/material'
-// import Navbar from '../Components/Navbar'
+import { Button, Container, Stack } from '@mui/material'
+import { useAuth } from '../Hooks/useAuth'
+import { Link } from 'react-router-dom'
 
 export const Home = () => {
-  const navigate = useNavigate()
+  const { user, persistState, token } = useAuth()
 
-  const handleClick = () => {
-    navigate(-1)
-  }
   return (
-    <Container>
-      <Box>Home</Box>
-      <Button onClick={handleClick} variant='outlined'>
-        Go Back
+    <Container sx={{ mt: '2 rem' }}>
+      <Stack direction={'row'} spacing={4} mb={4}>
+        User: {user?.userName} || Email: {user?.email} || Roles: {user?.roles}{' '}
+        || Token: {token ? 'Yes' : 'No'} || || Remember Me:
+        {persistState ? 'Yes' : 'No'}
+      </Stack>
+      <Button variant='outlined'>
+        <Link
+          to='/category'
+          style={{ color: 'primary', textDecoration: 'none' }}
+        >
+          Category
+        </Link>
+      </Button>
+      <Button variant='outlined'>
+        <Link to='/' style={{ color: 'primary', textDecoration: 'none' }}>
+          Posts
+        </Link>
       </Button>
     </Container>
   )

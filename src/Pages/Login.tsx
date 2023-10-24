@@ -11,7 +11,7 @@ import { UseFormReturn, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { loginData, loginSchema } from '../Types/Schema/LoginSchema'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import LoadingSnackbarComponent from '../Components/LoadingSnackbar'
 import { loginUser } from '../Helper/authHelpers'
 import { AxiosError } from 'axios'
@@ -20,7 +20,7 @@ import { useAuth } from '../Hooks/useAuth'
 function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [message, setMessage] = useState<string>('')
-  const { setAuthState, persistState, setPersistState } = useAuth() // Get the setAuthState from your context
+  const { setAuthState, setPersistState } = useAuth() // Get the setAuthState from your context
   const navigate = useNavigate() // Get the navigate function from react-router
   const location = useLocation() // Get the location object from react-router
   const from = location.state?.from?.pathname || '/dashboard' // Get the previous path from location.state.from.pathname
@@ -33,56 +33,46 @@ function LoginPage() {
     resolver: yupResolver(loginSchema),
   })
 
-  useEffect(() => {
-    localStorage.setItem('persistState', JSON.stringify(persistState))
-  }, [persistState])
-
   const onSubmit = async (data: loginData): Promise<void> => {
     setIsSubmitting(true)
     setMessage('Logging in...')
-    setPersistState(data.rememberMe)
     try {
       const { userData, token, status } = await loginUser(data)
 
       if (status === 201) {
         if (token && userData) {
+          // Save the token to local storage regardless of persistState
+          localStorage.setItem('authToken', token)
+          localStorage.setItem('persistState', JSON.stringify(data.rememberMe))
           setAuthState({
             token,
             user: userData,
           })
           setPersistState(data.rememberMe)
-
           navigate(from, { replace: true })
-          setIsSubmitting(false)
-          setMessage('')
         }
+      } else {
+        setMessage('Login Failed')
       }
     } catch (error: AxiosError | any) {
       if (!error.response) {
         setMessage('No Server Response')
-        setTimeout(() => {
-          setIsSubmitting(false)
-          setMessage('')
-        }, 2000)
       } else {
-        if (
-          error?.response?.data?.status === 401 ||
-          error?.response?.data?.status === 400 ||
-          error?.response?.data?.status === 404
-        ) {
-          setMessage('Invalid Credentials')
-          setTimeout(() => {
-            setIsSubmitting(false)
-            setMessage('')
-          }, 2000)
-        } else {
-          setMessage('Login Failed')
-          setTimeout(() => {
-            setIsSubmitting(false)
-            setMessage('')
-          }, 2000)
+        switch (error?.response?.data?.status) {
+          case 401:
+          case 400:
+          case 404:
+            setMessage('Invalid Credentials')
+            break
+          default:
+            setMessage('Login Failed')
         }
       }
+    } finally {
+      setTimeout(() => {
+        setIsSubmitting(false)
+        setMessage('')
+      }, 2000)
     }
   }
 

@@ -28,4 +28,4 @@ const NotFound404: React.FC = () => {
   )
 }
 
-export default NotFound404
+export { NotFound404 }
