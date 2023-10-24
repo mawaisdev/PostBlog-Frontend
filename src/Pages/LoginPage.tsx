@@ -17,7 +17,7 @@ import { loginUser } from '../Helper/authHelpers'
 import { AxiosError } from 'axios'
 import { useAuth } from '../Hooks/useAuth'
 
-function LoginPage() {
+export const LoginPage = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [message, setMessage] = useState<string>('')
   const { setAuthState, setPersistState } = useAuth() // Get the setAuthState from your context
@@ -153,5 +153,3 @@ function LoginPage() {
     </Box>
   )
 }
-
-export default LoginPage

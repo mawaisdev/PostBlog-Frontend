@@ -12,7 +12,7 @@ const StyledContainer = styled(Container)(({ theme }) => ({
   backgroundColor: theme.palette.grey[100],
 }))
 
-const NotFound404: React.FC = () => {
+export const NotFound404: React.FC = () => {
   const navigate = useNavigate()
   const handleClick = () => {
     navigate(-1)
@@ -31,5 +31,3 @@ const NotFound404: React.FC = () => {
     </StyledContainer>
   )
 }
-
-export { NotFound404 }

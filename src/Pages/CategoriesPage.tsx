@@ -1,6 +1,6 @@
 import { Grid, Paper, TextField, Button, Typography, Box } from '@mui/material'
 
-const Categories = () => {
+export const CategoriesPage = () => {
   return (
     <Grid container spacing={2} sx={{ minWidth: '440px' }}>
       {/* First Row */}
@@ -85,5 +85,3 @@ const Categories = () => {
     </Grid>
   )
 }
-
-export { Categories }

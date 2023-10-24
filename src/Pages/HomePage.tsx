@@ -2,7 +2,7 @@ import { Button, Container, Stack } from '@mui/material'
 import { useAuth } from '../Hooks/useAuth'
 import { Link } from 'react-router-dom'
 
-export const Home = () => {
+export const HomePage = () => {
   const { user, persistState, token } = useAuth()
 
   return (

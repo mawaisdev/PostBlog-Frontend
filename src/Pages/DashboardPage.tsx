@@ -3,7 +3,7 @@ import { useAuth } from '../Hooks/useAuth'
 import { Link } from 'react-router-dom'
 import { useLogout } from '../Hooks/useLogout'
 
-export const Dashboard = () => {
+export const DashboardPage = () => {
   const { user, persistState, token } = useAuth()
   const logout = useLogout()
 

@@ -1,23 +1,23 @@
 import { Routes, Route } from 'react-router-dom'
-import { Home } from './Pages/Home'
-import { NotFound404 } from './Pages/Missing'
+import { HomePage } from './Pages/HomePage'
+import { NotFound404 } from './Pages/NotFound404Page'
 import { NoAuth, RequireAuth } from './Components/ControllAuthRoutes'
 import { Layout } from './Routes/Layout'
-import { Dashboard } from './Pages/DashboardPage'
+import { DashboardPage } from './Pages/DashboardPage'
 import { UnauthorizedPage } from './Pages/UnauthorizedPage'
-import { Categories } from './Pages/Categories'
 import { PersistLogin } from './Components/PersistLogin'
 import { ProfilePage } from './Pages/ProfilePage'
 import { SettingsPage } from './Pages/SettingsPage'
-import LoginPage from './Pages/Login'
-import SignUpPage from './Pages/Signup'
+import { LoginPage } from './Pages/LoginPage'
+import { SignUpPage } from './Pages/SignUpPage'
+import { CategoriesPage } from './Pages/CategoriesPage'
 
 const App = () => {
   return (
     <Routes>
       <Route path='/' element={<Layout />}>
         {/* Public Routes */}
-        <Route path='/' element={<Home />} />
+        <Route path='/' element={<HomePage />} />
         <Route path='/login' element={<NoAuth />}>
           <Route index element={<LoginPage />} />
         </Route>
@@ -29,7 +29,7 @@ const App = () => {
         <Route element={<PersistLogin />}>
           {/* Routes for Admin */}
           <Route element={<RequireAuth roles={['Admin']} />}>
-            <Route path='/category' element={<Categories />} />
+            <Route path='/category' element={<CategoriesPage />} />
           </Route>
 
           {/* Routes for User */}
@@ -40,7 +40,7 @@ const App = () => {
 
           {/* Routes for Both Admin and User */}
           <Route element={<RequireAuth roles={['User', 'Admin']} />}>
-            <Route path='/dashboard' element={<Dashboard />} />
+            <Route path='/dashboard' element={<DashboardPage />} />
             <Route path='/profile' element={<ProfilePage />} />
             <Route path='/settings' element={<SettingsPage />} />
             <Route path='/unauthorized' element={<UnauthorizedPage />} />
