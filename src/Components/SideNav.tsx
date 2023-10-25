@@ -94,7 +94,7 @@ export const SideNav = ({ children }: SideNavProps) => {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
   const logout = useLogout()
-  const { token } = useAuth()
+  const { token, user } = useAuth()
 
   return (
     <>
@@ -135,20 +135,26 @@ export const SideNav = ({ children }: SideNavProps) => {
               heading={MenuItems.Posts}
               handleClick={() => navigate('/')}
             />
+
             {token ? (
               <>
-                <NavListItem
-                  open={open}
-                  icon={<DashboardCustomizeOutlined />}
-                  heading={MenuItems.Dashboard}
-                  handleClick={() => navigate('/dashboard')}
-                />
-                <NavListItem
-                  open={open}
-                  icon={<CategoryOutlined />}
-                  heading={MenuItems.Categories}
-                  handleClick={() => navigate('/category')}
-                />
+                {token && user?.roles === 'Admin' ? (
+                  <>
+                    <Divider />
+                    <NavListItem
+                      open={open}
+                      icon={<DashboardCustomizeOutlined />}
+                      heading={MenuItems.Dashboard}
+                      handleClick={() => navigate('/dashboard')}
+                    />
+                    <NavListItem
+                      open={open}
+                      icon={<CategoryOutlined />}
+                      heading={MenuItems.Categories}
+                      handleClick={() => navigate('/category')}
+                    />
+                  </>
+                ) : null}
 
                 <Divider />
                 <NavListItem
