@@ -88,7 +88,6 @@ export const CreateCategory = () => {
           error={!!errors.name}
           helperText={errors.name?.message}
           autoComplete='off'
-          autoFocus
           required
         />
         <TextField
@@ -100,7 +99,6 @@ export const CreateCategory = () => {
           error={!!errors.description}
           helperText={errors.description?.message}
           autoComplete='off'
-          autoFocus
         />
         <Box
           sx={{

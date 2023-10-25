@@ -177,7 +177,9 @@ export const SideNav = ({ children }: SideNavProps) => {
             heading={
               token && token.length > 0 ? MenuItems.Logout : MenuItems.Login
             }
-            handleClick={() => logout()}
+            handleClick={
+              token && token.length > 0 ? logout : () => navigate('/login')
+            }
           />
         </Drawer>
         <Box component='main' sx={{ flexGrow: 1, p: 3, pt: 8 }} height={100}>
