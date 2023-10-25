@@ -1,12 +1,18 @@
 import { CircularProgress, Box } from '@mui/material'
 
-export const ResponsiveCircularProgress = () => {
+export interface ResponsiveCircularProgressProps {
+  height?: string
+}
+
+export const ResponsiveCircularProgress = ({
+  height = '35vh',
+}: ResponsiveCircularProgressProps) => {
   return (
     <Box
       display='flex'
       justifyContent='center'
       alignItems='center'
-      height='100vh'
+      height={height}
     >
       <CircularProgress disableShrink size={200} />
     </Box>

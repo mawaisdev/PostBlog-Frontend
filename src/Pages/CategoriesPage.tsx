@@ -1,5 +1,6 @@
 import { Grid, Paper } from '@mui/material'
 import { CreateCategory } from '../Components/CreateCategory'
+import { CategoriesTable } from '../Components/CategoriesTable'
 
 export const CategoriesPage = () => {
   return (
@@ -12,9 +13,10 @@ export const CategoriesPage = () => {
             sx={{
               height: '50vh',
               padding: 2,
+              overflow: 'auto', // Add this to make the content scrollable
             }}
           >
-            <div>Your Categories Table Here</div>
+            <CategoriesTable />
           </Paper>
         </Grid>
 
