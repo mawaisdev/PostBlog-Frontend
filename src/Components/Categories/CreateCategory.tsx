@@ -8,6 +8,7 @@ import { useAxiosPrivate } from '../../Hooks/useAxiosPrivate'
 import { AxiosError } from 'axios'
 import { CreateCategoryType } from '../../Types/Responses/Category/CreateCategory'
 import { useCategories } from '../../Contexts/CategoryContext'
+import { Category } from '../../Types/Responses/Category/Category'
 
 export const CreateCategory = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
@@ -29,6 +30,8 @@ export const CreateCategory = () => {
   // Define your submission logic (for instance, you could send the category to an API)
   const onSubmit = async (data: categoryData): Promise<void> => {
     setIsSubmitting(true)
+    data.name = data.name.trim()
+    data.description = data.description?.trim()
 
     try {
       const { data: response } = await axiosPrivate.post<CreateCategoryType>(
@@ -36,9 +39,12 @@ export const CreateCategory = () => {
         data
       )
 
-      if (response.status === 201) {
-        const { data: response } = await axiosPrivate.get('/category')
-        setCategories(response.data)
+      if (response.status === 201 && response.data) {
+        const category: Category = response.data
+
+        // Append the new category to the categories state
+        setCategories((prevCategories) => [...prevCategories, category])
+
         setMessage(response.response)
         setSuccess(true)
         reset()

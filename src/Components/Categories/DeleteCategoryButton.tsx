@@ -10,7 +10,6 @@ import {
 import { useAxiosPrivate } from '../../Hooks/useAxiosPrivate'
 import { AxiosError } from 'axios'
 import { useCategories } from '../../Contexts/CategoryContext'
-import { CategoryAllResponse } from '../../Types/Responses/Category/CategoryAll'
 
 type DeleteProps = {
   id: number
@@ -36,10 +35,9 @@ export const DeleteButton: React.FC<DeleteProps> = ({ id, message }) => {
     try {
       const response = await axiosPrivate.delete(`/category/${id}`)
       if (response.data.status === 200) {
-        const { data: response } = await axiosPrivate.get<CategoryAllResponse>(
-          '/category'
-        )
-        setCategories(response.data)
+        setCategories((prevCategories) => {
+          return prevCategories.filter((category) => category.id !== id)
+        })
       }
     } catch (error: AxiosError | any) {
       if (error?.response.status === 404) {
