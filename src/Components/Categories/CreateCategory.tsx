@@ -1,13 +1,13 @@
 import { UseFormReturn, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Alert, Box, Button, TextField, Typography } from '@mui/material'
-import { categoryData, categorySchema } from '../Types/Schema/CategorySchema'
+import { categoryData, categorySchema } from '../../Types/Schema/CategorySchema'
 import { useState } from 'react'
-import { ResponsiveCircularProgress } from './ResponsiveCircularProgress'
-import { useAxiosPrivate } from '../Hooks/useAxiosPrivate'
+import { ResponsiveCircularProgress } from '../ResponsiveCircularProgress'
+import { useAxiosPrivate } from '../../Hooks/useAxiosPrivate'
 import { AxiosError } from 'axios'
-import { CreateCategoryType } from '../Types/Responses/Category/CreateCategory'
-import { useCategories } from '../Contexts/CategoryContext'
+import { CreateCategoryType } from '../../Types/Responses/Category/CreateCategory'
+import { useCategories } from '../../Contexts/CategoryContext'
 
 export const CreateCategory = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)

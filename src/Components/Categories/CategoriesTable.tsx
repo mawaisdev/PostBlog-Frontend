@@ -7,13 +7,13 @@ import {
   TableRow,
   Button,
 } from '@mui/material'
-import { Category } from '../Types/Responses/Category/Category'
+import { Category } from '../../Types/Responses/Category/Category'
 import React, { useEffect } from 'react'
-import { ResponsiveCircularProgress } from './ResponsiveCircularProgress'
-import { useAxiosPrivate } from '../Hooks/useAxiosPrivate'
+import { ResponsiveCircularProgress } from '../ResponsiveCircularProgress'
+import { useAxiosPrivate } from '../../Hooks/useAxiosPrivate'
 import { AxiosError } from 'axios'
-import { CategoryAllResponse } from '../Types/Responses/Category/CategoryAll'
-import { useCategories } from '../Contexts/CategoryContext'
+import { CategoryAllResponse } from '../../Types/Responses/Category/CategoryAll'
+import { useCategories } from '../../Contexts/CategoryContext'
 import { DeleteButton } from './DeleteCategoryButton'
 
 export const CategoriesTable = () => {

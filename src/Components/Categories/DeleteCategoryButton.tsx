@@ -7,10 +7,10 @@ import {
   DialogContentText,
   DialogTitle,
 } from '@mui/material'
-import { useAxiosPrivate } from '../Hooks/useAxiosPrivate'
+import { useAxiosPrivate } from '../../Hooks/useAxiosPrivate'
 import { AxiosError } from 'axios'
-import { useCategories } from '../Contexts/CategoryContext'
-import { CategoryAllResponse } from '../Types/Responses/Category/CategoryAll'
+import { useCategories } from '../../Contexts/CategoryContext'
+import { CategoryAllResponse } from '../../Types/Responses/Category/CategoryAll'
 
 type DeleteProps = {
   id: number

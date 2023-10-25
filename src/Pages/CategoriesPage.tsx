@@ -1,6 +1,6 @@
 import { Grid, Paper } from '@mui/material'
-import { CreateCategory } from '../Components/CreateCategory'
-import { CategoriesTable } from '../Components/CategoriesTable'
+import { CreateCategory } from '../Components/Categories/CreateCategory'
+import { CategoriesTable } from '../Components/Categories/CategoriesTable'
 
 export const CategoriesPage = () => {
   return (
