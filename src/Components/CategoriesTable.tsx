@@ -14,19 +14,17 @@ import { useAxiosPrivate } from '../Hooks/useAxiosPrivate'
 import { AxiosError } from 'axios'
 import { CategoryAllResponse } from '../Types/Responses/Category/CategoryAll'
 import { useCategories } from '../Contexts/CategoryContext'
+import { DeleteButton } from './DeleteButton'
 
 export const CategoriesTable = () => {
   const [isLoading, setIsLoading] = React.useState(false)
   const { categories, setCategories } = useCategories()
+
   const handleUpdate = (category: Category) => {
     // Handle the update logic here
     console.log(category)
   }
 
-  const handleDelete = (id: number) => {
-    console.log(id)
-    setCategories(categories.filter((category) => category.id !== id))
-  }
   const headers = ['Id', 'Name', 'Descriptions', 'Actions']
   const axiosPrivate = useAxiosPrivate()
 
@@ -82,9 +80,10 @@ export const CategoriesTable = () => {
               <TableCell>{category.description}</TableCell>
               <TableCell>
                 <Button onClick={() => handleUpdate(category)}>Update</Button>
-                <Button onClick={() => handleDelete(category.id)}>
-                  Delete
-                </Button>
+                <DeleteButton
+                  id={category.id}
+                  message='Are You Sure? You want to delete this Category.'
+                />
               </TableCell>
             </TableRow>
           ))}
