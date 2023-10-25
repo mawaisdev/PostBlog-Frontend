@@ -14,7 +14,7 @@ import { useAxiosPrivate } from '../Hooks/useAxiosPrivate'
 import { AxiosError } from 'axios'
 import { CategoryAllResponse } from '../Types/Responses/Category/CategoryAll'
 import { useCategories } from '../Contexts/CategoryContext'
-import { DeleteButton } from './DeleteButton'
+import { DeleteButton } from './DeleteCategoryButton'
 
 export const CategoriesTable = () => {
   const [isLoading, setIsLoading] = React.useState(false)
