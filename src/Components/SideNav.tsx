@@ -7,12 +7,7 @@ import List from '@mui/material/List'
 import CssBaseline from '@mui/material/CssBaseline'
 import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
-import IconButton from '@mui/material/IconButton'
-import MenuIcon from '@mui/icons-material/Menu'
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import { useNavigate } from 'react-router-dom'
-import SubtitlesOutlinedIcon from '@mui/icons-material/SubtitlesOutlined'
 
 import { NavListItem } from './NavListItem'
 import { useLogout } from '../Hooks/useLogout'
@@ -23,11 +18,16 @@ import { useAuth } from '../Hooks/useAuth'
 import {
   AccountCircleOutlined,
   CategoryOutlined,
+  ChevronLeft,
+  ChevronRight,
   DashboardCustomizeOutlined,
   LoginOutlined,
   LogoutOutlined,
+  Menu,
   SettingsOutlined,
+  SubtitlesOutlined,
 } from '@mui/icons-material'
+import { IconButton } from '@mui/material'
 
 enum MenuItems {
   Dashboard = 'Dashboard',
@@ -110,7 +110,7 @@ export const SideNav = ({ children }: SideNavProps) => {
               }}
               edge='start'
             >
-              <MenuIcon />
+              <Menu />
             </IconButton>
             <Typography variant='h6' noWrap component='div'>
               PostBlog
@@ -120,18 +120,14 @@ export const SideNav = ({ children }: SideNavProps) => {
         <Drawer variant='permanent' open={open}>
           <DrawerHeader>
             <IconButton>
-              {theme.direction === 'rtl' ? (
-                <ChevronRightIcon />
-              ) : (
-                <ChevronLeftIcon />
-              )}
+              {theme.direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}
             </IconButton>
           </DrawerHeader>
           <Divider />
           <List>
             <NavListItem
               open={open}
-              icon={<SubtitlesOutlinedIcon />}
+              icon={<SubtitlesOutlined />}
               heading={MenuItems.Posts}
               handleClick={() => navigate('/')}
             />
