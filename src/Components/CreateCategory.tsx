@@ -7,6 +7,7 @@ import { ResponsiveCircularProgress } from './ResponsiveCircularProgress'
 import { useAxiosPrivate } from '../Hooks/useAxiosPrivate'
 import { AxiosError } from 'axios'
 import { CreateCategoryType } from '../Types/Responses/Category/CreateCategory'
+import { useCategories } from '../Contexts/CategoryContext'
 
 export const CreateCategory = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
@@ -14,10 +15,12 @@ export const CreateCategory = () => {
   const [message, setMessage] = useState<string | undefined>(undefined)
   // Fetch axiosPrivate instance here
   const axiosPrivate = useAxiosPrivate()
+  const { setCategories } = useCategories()
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   }: UseFormReturn<categoryData> = useForm<categoryData>({
     resolver: yupResolver(categorySchema),
@@ -34,8 +37,11 @@ export const CreateCategory = () => {
       )
 
       if (response.status === 201) {
+        const { data: response } = await axiosPrivate.get('/category')
+        setCategories(response.data)
         setMessage(response.response)
         setSuccess(true)
+        reset()
       }
     } catch (error: AxiosError | any) {
       if (error.response) {
@@ -108,19 +114,6 @@ export const CreateCategory = () => {
             Create Category
           </Button>
         </Box>
-        {/* <Snackbar autoHideDuration={3000} open={open}>
-          {success ? (
-            <SnackbarContent
-              sx={{ backgroundColor: 'green' }}
-              message={message}
-            />
-          ) : (
-            <SnackbarContent
-              sx={{ backgroundColor: 'red' }}
-              message={message}
-            />
-          )}
-        </Snackbar> */}
         {message && (
           <Box mt={2} display='flex' justifyContent='center'>
             <Alert
