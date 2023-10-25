@@ -5,9 +5,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Button,
 } from '@mui/material'
-import { Category } from '../../Types/Responses/Category/Category'
 import React, { useEffect } from 'react'
 import { ResponsiveCircularProgress } from '../ResponsiveCircularProgress'
 import { useAxiosPrivate } from '../../Hooks/useAxiosPrivate'
@@ -15,16 +13,11 @@ import { AxiosError } from 'axios'
 import { CategoryAllResponse } from '../../Types/Responses/Category/CategoryAll'
 import { useCategories } from '../../Contexts/CategoryContext'
 import { DeleteButton } from './DeleteCategoryButton'
+import { UpdateCategoryDialog } from './UpdateCategoryButton'
 
 export const CategoriesTable = () => {
   const [isLoading, setIsLoading] = React.useState(false)
   const { categories, setCategories } = useCategories()
-
-  const handleUpdate = (category: Category) => {
-    // Handle the update logic here
-    console.log(category)
-  }
-
   const headers = ['Id', 'Name', 'Descriptions', 'Actions']
   const axiosPrivate = useAxiosPrivate()
 
@@ -79,7 +72,7 @@ export const CategoriesTable = () => {
               <TableCell>{category.name}</TableCell>
               <TableCell>{category.description}</TableCell>
               <TableCell>
-                <Button onClick={() => handleUpdate(category)}>Update</Button>
+                <UpdateCategoryDialog category={category} />
                 <DeleteButton
                   id={category.id}
                   message='Are You Sure? You want to delete this Category.'
