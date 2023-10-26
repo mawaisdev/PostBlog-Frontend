@@ -1,10 +1,11 @@
 import axios from 'axios'
+const baseURL: string = import.meta.env.VITE_BASE_URL
 export default axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL,
+  baseURL,
 })
 
 export const axiosPrivate = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL,
+  baseURL,
   headers: {
     'Content-Type': 'application/json',
   },

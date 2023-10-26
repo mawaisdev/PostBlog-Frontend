@@ -6,6 +6,7 @@ import jwtDecode from 'jwt-decode'
 import { User } from '../Types/Responses/User'
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
+const LOGOUT_DURATION = import.meta.env.VITE_LOGOUT_DURATION
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const localStorageToken = localStorage.getItem('authToken')
@@ -32,7 +33,6 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   // Auto-Logout logic after a specific duration if persistState is not set
   useEffect(() => {
     let logoutTimer: NodeJS.Timeout
-    const DURATION = 3600000 // One hour in miliseconds
 
     if (!persistState && authState.token) {
       logoutTimer = setTimeout(() => {
@@ -40,7 +40,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
         // Remove the token and persistState from local storage
         localStorage.removeItem('authToken')
         localStorage.removeItem('persistState')
-      }, DURATION)
+      }, LOGOUT_DURATION)
     }
 
     return () => {
