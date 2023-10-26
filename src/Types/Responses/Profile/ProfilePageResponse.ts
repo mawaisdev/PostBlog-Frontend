@@ -1,16 +1,16 @@
 export interface ProfilePageResponse {
   status: number
   message: string
-  user: User
+  user: ProfileUser
 }
 
-export interface User {
+export interface ProfileUser {
   firstName: string
-  lastName: string
+  lastName: string | null
   userName: string
   email: string
-  profilePicture: string
-  bio: string
+  profilePicture: string | null
+  bio: string | null
   lastLogin: string
   role: string
 }
