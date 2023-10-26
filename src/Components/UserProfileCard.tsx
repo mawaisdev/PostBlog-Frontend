@@ -39,7 +39,19 @@ const UserProfileCard = memo((user: ProfileUser) => {
         <p>{user.userName}</p>
         <p>{user.email}</p>
         {user.bio && <p>{user.bio}</p>}
-        <p>Last Login: {formatDate(user.lastLogin)}</p>
+        <p>
+          Last Login:{' '}
+          {formatDate(
+            user.lastLogin,
+            true,
+            '2-digit',
+            '2-digit',
+            '2-digit',
+            undefined,
+            undefined,
+            'short'
+          )}
+        </p>
         <p>Role: {user.role}</p>
       </Box>
     </Paper>
