@@ -1,5 +1,4 @@
 import { Routes, Route } from 'react-router-dom'
-import { HomePage } from './Pages/HomePage'
 import { NotFound404 } from './Pages/NotFound404Page'
 import { NoAuth, RequireAuth } from './Components/ControllAuthRoutes'
 import { Layout } from './Routes/Layout'
@@ -11,13 +10,14 @@ import { SettingsPage } from './Pages/SettingsPage'
 import { LoginPage } from './Pages/LoginPage'
 import { SignUpPage } from './Pages/SignUpPage'
 import { CategoriesPage } from './Pages/CategoriesPage'
+import { PostsPage } from './Pages/PostsPage'
 
 const App = () => {
   return (
     <Routes>
       <Route path='/' element={<Layout />}>
         {/* Public Routes */}
-        <Route path='/' element={<HomePage />} />
+        <Route path='/' element={<PostsPage />} />
         <Route path='/login' element={<NoAuth />}>
           <Route index element={<LoginPage />} />
         </Route>
