@@ -1,3 +1,5 @@
+import { Roles } from '../Responses/User'
+
 export interface RequireAuthProps {
-  roles: Array<'Admin' | 'User'>
+  roles: Array<Roles.Admin | Roles.User>
 }

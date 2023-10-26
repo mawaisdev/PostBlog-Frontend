@@ -11,6 +11,7 @@ import { LoginPage } from './Pages/LoginPage'
 import { SignUpPage } from './Pages/SignUpPage'
 import { CategoriesPage } from './Pages/CategoriesPage'
 import { PostsPage } from './Pages/PostsPage'
+import { Roles } from './Types/Responses/User'
 
 const App = () => {
   return (
@@ -28,18 +29,18 @@ const App = () => {
         {/* Routes for Authenticated Users (Protected by PersistLogin) */}
         <Route element={<PersistLogin />}>
           {/* Routes for Admin */}
-          <Route element={<RequireAuth roles={['Admin']} />}>
+          <Route element={<RequireAuth roles={[Roles.Admin]} />}>
             <Route path='/category' element={<CategoriesPage />} />
           </Route>
 
           {/* Routes for User */}
-          <Route element={<RequireAuth roles={['User']} />}>
+          <Route element={<RequireAuth roles={[Roles.User]} />}>
             <Route path='/userprofile' element={<h1>Profile for User</h1>} />{' '}
             {/* Renamed to clarify it's for users */}
           </Route>
 
           {/* Routes for Both Admin and User */}
-          <Route element={<RequireAuth roles={['User', 'Admin']} />}>
+          <Route element={<RequireAuth roles={[Roles.User, Roles.User]} />}>
             <Route path='/dashboard' element={<DashboardPage />} />
             <Route path='/profile' element={<ProfilePage />} />
             <Route path='/settings' element={<SettingsPage />} />
