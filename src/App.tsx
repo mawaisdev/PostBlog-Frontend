@@ -40,11 +40,12 @@ const App = () => {
           </Route>
 
           {/* Routes for Both Admin and User */}
-          <Route element={<RequireAuth roles={[Roles.User, Roles.User]} />}>
+          <Route element={<RequireAuth roles={[Roles.Admin, Roles.User]} />}>
             <Route path='/dashboard' element={<DashboardPage />} />
             <Route path='/profile' element={<ProfilePage />} />
             <Route path='/settings' element={<SettingsPage />} />
             <Route path='/unauthorized' element={<UnauthorizedPage />} />
+            <Route path='/posts/:id' element={<h1>Post Page</h1>} />
           </Route>
         </Route>
       </Route>
