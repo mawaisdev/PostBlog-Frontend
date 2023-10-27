@@ -15,6 +15,8 @@ import { Roles } from './Types/Responses/User'
 import { SideNav } from './Components/SideNav'
 import { AuthProvider } from './Contexts/AuthContext'
 import { CategoryProvider } from './Contexts/CategoryContext'
+import { Post } from './Components/Post'
+import { Routes as RoutesEnum } from './Types/Enums'
 
 const App = () => {
   return (
@@ -25,11 +27,14 @@ const App = () => {
             <Routes>
               <Route path='/' element={<Layout />}>
                 {/* Public Routes */}
-                <Route path='/' element={<PostsPage />} />
-                <Route path='/login' element={<NoAuth />}>
+                <Route path={RoutesEnum.Home} element={<PostsPage />} />
+                <Route path={RoutesEnum.Posts} element={<PostsPage />} />
+                <Route path={RoutesEnum.PostWithId} element={<Post />} />
+
+                <Route path={RoutesEnum.Login} element={<NoAuth />}>
                   <Route index element={<LoginPage />} />
                 </Route>
-                <Route path='/signup' element={<NoAuth />}>
+                <Route path={RoutesEnum.Signup} element={<NoAuth />}>
                   <Route index element={<SignUpPage />} />
                 </Route>
 
@@ -37,13 +42,16 @@ const App = () => {
                 <Route element={<PersistLogin />}>
                   {/* Routes for Admin */}
                   <Route element={<RequireAuth roles={[Roles.Admin]} />}>
-                    <Route path='/category' element={<CategoriesPage />} />
+                    <Route
+                      path={RoutesEnum.Categories}
+                      element={<CategoriesPage />}
+                    />
                   </Route>
 
                   {/* Routes for User */}
                   <Route element={<RequireAuth roles={[Roles.User]} />}>
                     <Route
-                      path='/userprofile'
+                      path={RoutesEnum.UserProfile}
                       element={<h1>Profile for User</h1>}
                     />{' '}
                     {/* Renamed to clarify it's for users */}
@@ -53,14 +61,22 @@ const App = () => {
                   <Route
                     element={<RequireAuth roles={[Roles.Admin, Roles.User]} />}
                   >
-                    <Route path='/dashboard' element={<DashboardPage />} />
-                    <Route path='/profile' element={<ProfilePage />} />
-                    <Route path='/settings' element={<SettingsPage />} />
                     <Route
-                      path='/unauthorized'
+                      path={RoutesEnum.Dashboard}
+                      element={<DashboardPage />}
+                    />
+                    <Route
+                      path={RoutesEnum.Profile}
+                      element={<ProfilePage />}
+                    />
+                    <Route
+                      path={RoutesEnum.Settings}
+                      element={<SettingsPage />}
+                    />
+                    <Route
+                      path={RoutesEnum.Unauthorized}
                       element={<UnauthorizedPage />}
                     />
-                    <Route path='/posts/:id' element={<h1>Post Page</h1>} />
                   </Route>
                 </Route>
               </Route>

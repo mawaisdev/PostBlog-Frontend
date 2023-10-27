@@ -28,17 +28,8 @@ import {
   SubtitlesOutlined,
 } from '@mui/icons-material'
 import { IconButton } from '@mui/material'
-
-enum MenuItems {
-  Dashboard = 'Dashboard',
-  Categories = 'Categories',
-  Posts = 'Posts',
-  Profile = 'Profile',
-  Settings = 'Settings',
-  Home = 'Home',
-  Logout = 'Logout',
-  Login = 'Login',
-}
+import { Roles } from '../Types/Responses/User'
+import { MenuItems, Routes } from '../Types/Enums'
 
 export const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -129,25 +120,25 @@ export const SideNav = ({ children }: SideNavProps) => {
               open={open}
               icon={<SubtitlesOutlined />}
               heading={MenuItems.Posts}
-              handleClick={() => navigate('/')}
+              handleClick={() => navigate(Routes.Posts)}
             />
 
             {token ? (
               <>
-                {token && user?.roles === 'Admin' ? (
+                {token && user?.roles === Roles.Admin ? (
                   <>
                     <Divider />
                     <NavListItem
                       open={open}
                       icon={<DashboardCustomizeOutlined />}
                       heading={MenuItems.Dashboard}
-                      handleClick={() => navigate('/dashboard')}
+                      handleClick={() => navigate(Routes.Dashboard)}
                     />
                     <NavListItem
                       open={open}
                       icon={<CategoryOutlined />}
                       heading={MenuItems.Categories}
-                      handleClick={() => navigate('/category')}
+                      handleClick={() => navigate(Routes.Categories)}
                     />
                   </>
                 ) : null}
@@ -157,13 +148,13 @@ export const SideNav = ({ children }: SideNavProps) => {
                   open={open}
                   icon={<AccountCircleOutlined />}
                   heading={MenuItems.Profile}
-                  handleClick={() => navigate('/profile')}
+                  handleClick={() => navigate(Routes.Profile)}
                 />
                 <NavListItem
                   open={open}
                   icon={<SettingsOutlined />}
                   heading={MenuItems.Settings}
-                  handleClick={() => navigate('/settings')}
+                  handleClick={() => navigate(Routes.Settings)}
                 />
               </>
             ) : null}
