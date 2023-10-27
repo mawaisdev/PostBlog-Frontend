@@ -9,20 +9,25 @@ import {
   Chip,
   Divider,
   List,
-  ListItem,
   Typography,
+  Stack,
+  TextField,
+  Grid,
+  IconButton,
 } from '@mui/material'
 
-// Import your interfaces
-import {
-  PostByIdResponse,
-  Comment,
-} from '../Types/Responses/Post/PostByIdResponse'
+import { PostByIdResponse } from '../Types/Responses/Post/PostByIdResponse'
 import { formatDate } from '../Utils/DateFormat'
+import { CommentComponent } from './CommentComponent'
+import { useAuth } from '../Hooks/useAuth'
+import { NotFound404 } from '../Pages/NotFound404Page'
+import { ResponsiveCircularProgress } from './ResponsiveCircularProgress'
+import { Send } from '@mui/icons-material'
 
 export const Post = () => {
   const { id } = useParams<{ id: string }>()
   const [postData, setPostData] = useState<PostByIdResponse | null>(null)
+  const { user } = useAuth()
 
   useEffect(() => {
     let isMounted = true
@@ -37,7 +42,13 @@ export const Post = () => {
           setPostData(data)
         }
       } catch (error: AxiosError | any) {
-        console.log(error)
+        if (error.response?.status === 404) {
+          setPostData({
+            status: 404,
+            response: error.response.data,
+            data: error.response.data,
+          })
+        }
       }
     }
 
@@ -51,33 +62,72 @@ export const Post = () => {
 
   // If data hasn't been fetched yet, show a loading message.
   if (!postData) {
-    return <h2>Loading post...</h2>
+    return <ResponsiveCircularProgress height='100vh' />
+  }
+  if (postData?.status === 404) {
+    return <NotFound404 />
   }
 
   return (
     <Card variant='outlined' style={{ marginTop: 20, marginBottom: 20 }}>
-      <CardHeader
-        title={postData.data?.title}
-        subheader={`Posted by ${postData.data?.user.userName} on ${
-          postData.data && formatDate(postData.data?.createdAt)
-        }`}
-      />
-      <Chip
-        label={postData.data?.category.name}
-        variant='outlined'
-        style={{ margin: 15 }}
-      />
+      <Stack direction='row' justifyContent='space-between'>
+        <CardHeader
+          title={postData.data?.title}
+          subheader={`Posted by ${postData.data?.user.userName} on ${
+            postData.data && formatDate(postData.data?.createdAt)
+          }`}
+        />
+        <Chip
+          label={postData.data?.category.name}
+          variant='outlined'
+          style={{ margin: 15 }}
+        />
+      </Stack>
       <CardContent>
         <Typography variant='body1'>{postData.data?.body}</Typography>
       </CardContent>
       <Divider />
-      <CardContent>
+      {user ? (
+        <Grid
+          container
+          spacing={2}
+          m={2}
+          // style={{ marginTop: '20px', marginBottom: '20px' }}
+        >
+          <Grid item xs={9} md={10}>
+            <TextField
+              label='Add a comment'
+              variant='outlined'
+              fullWidth
+              // add onChange and other required props
+            />
+          </Grid>
+          <Grid item xs={3} md={2}>
+            <IconButton color='primary'>
+              <Send />
+            </IconButton>
+          </Grid>
+        </Grid>
+      ) : (
+        <Typography
+          m={2}
+          variant='body2'
+          color='textSecondary'
+          style={{ marginTop: '20px', marginBottom: '20px' }}
+        >
+          Please login to add comments.
+        </Typography>
+      )}
+
+      <CardContent sx={{ m: 2 }}>
         <Typography variant='h6'>Comments</Typography>
         <List>
-          {postData.data?.comments.map((comment: Comment) => (
-            <ListItem key={comment.comment_id}>
-              <Typography variant='body2'>{comment.comment_text}</Typography>
-            </ListItem>
+          {postData.data?.comments.map((comment) => (
+            <CommentComponent
+              key={comment.comment_id}
+              comment={comment}
+              isLoggedIn={user ? true : false}
+            />
           ))}
         </List>
       </CardContent>
