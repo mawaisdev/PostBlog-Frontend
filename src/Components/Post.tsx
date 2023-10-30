@@ -36,7 +36,6 @@ export const Post = () => {
 
     const getPost = async () => {
       try {
-        console.log('Getting post')
         const { data } = await axios.get<PostByIdResponse>(`/posts/${id}`, {
           signal: controller.signal,
         })

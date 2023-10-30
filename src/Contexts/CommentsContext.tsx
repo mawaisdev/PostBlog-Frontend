@@ -31,34 +31,42 @@ export const CommentsProvider = ({
   }
 
   const removeComment = (parentId: number | null, commentId: number) => {
-    console.log('removeComment', { parentId, commentId })
-
-    if (parentId !== null) {
-      console.log('Not handling non-main comments right now.')
-      return // exit early if parentId is not null
-    }
-
     setComments((prevComments) => {
-      console.log('Comments State Before Anything', { prevComments })
       const updatedCommentsState = { ...prevComments }
 
-      // Remove the standalone main comment
-      if (updatedCommentsState['null']) {
-        updatedCommentsState['null'] = updatedCommentsState['null'].filter(
-          (comment) => comment.comment_id !== commentId
-        )
+      if (parentId === null) {
+        // Main comment
+        // Remove the standalone main comment
+        if (updatedCommentsState['null']) {
+          updatedCommentsState['null'] = updatedCommentsState['null'].filter(
+            (comment) => comment.comment_id !== commentId
+          )
 
-        // If after deletion, there are no main comments, remove the "null" key
-        if (updatedCommentsState['null'].length === 0) {
-          delete updatedCommentsState['null']
+          // If after deletion, there are no main comments, remove the "null" key
+          if (updatedCommentsState['null'].length === 0) {
+            delete updatedCommentsState['null']
+          }
+        }
+      } else {
+        // Child comment
+        // Remove the child comment
+        if (updatedCommentsState[String(parentId)]) {
+          updatedCommentsState[String(parentId)] = updatedCommentsState[
+            String(parentId)
+          ].filter((comment) => comment.comment_id !== commentId)
+
+          // If after deletion, the parent has no more children, remove the key
+          if (updatedCommentsState[String(parentId)].length === 0) {
+            delete updatedCommentsState[String(parentId)]
+          }
         }
 
-        console.log('Comments State After Deleting', {
-          updatedCommentsState,
-        })
+        // If this child comment is also a parent to others, remove its key
+        if (updatedCommentsState[String(commentId)]) {
+          delete updatedCommentsState[String(commentId)]
+        }
       }
 
-      console.log('Comments State Final', { updatedCommentsState })
       return updatedCommentsState
     })
   }
