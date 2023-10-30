@@ -15,7 +15,6 @@ import {
   Grid,
   IconButton,
 } from '@mui/material'
-
 import { PostByIdResponse } from '../Types/Responses/Post/PostByIdResponse'
 import { formatDate } from '../Utils/DateFormat'
 import { CommentComponent } from './CommentComponent'
@@ -23,11 +22,13 @@ import { useAuth } from '../Hooks/useAuth'
 import { NotFound404 } from '../Pages/NotFound404Page'
 import { ResponsiveCircularProgress } from './ResponsiveCircularProgress'
 import { Send } from '@mui/icons-material'
+import { useComments } from '../Contexts/CommentsContext'
 
 export const Post = () => {
   const { id } = useParams<{ id: string }>()
   const [postData, setPostData] = useState<PostByIdResponse | null>(null)
   const { user } = useAuth()
+  const { comments, setChildComments } = useComments() // Destructure comments from context
 
   useEffect(() => {
     let isMounted = true
@@ -35,11 +36,14 @@ export const Post = () => {
 
     const getPost = async () => {
       try {
+        console.log('Getting post')
         const { data } = await axios.get<PostByIdResponse>(`/posts/${id}`, {
           signal: controller.signal,
         })
         if (isMounted) {
           setPostData(data)
+          console.log('Post Data: ', { postData })
+          setChildComments(null, data.data?.comments || [])
         }
       } catch (error: AxiosError | any) {
         if (error.response?.status === 404) {
@@ -58,7 +62,7 @@ export const Post = () => {
       isMounted = false
       controller.abort()
     }
-  }, [id])
+  }, [id]) // Only id in the dependency array// Keep only id in the dependency array to avoid infinite requests
 
   // If data hasn't been fetched yet, show a loading message.
   if (!postData) {
@@ -122,11 +126,15 @@ export const Post = () => {
       <CardContent sx={{ m: 2 }}>
         <Typography variant='h6'>Comments</Typography>
         <List>
-          {postData.data?.comments.map((comment) => (
+          {/* Render main comments directly from the context */}
+          {comments['null']?.map((comment) => (
             <CommentComponent
               key={comment.comment_id}
               comment={comment}
               isLoggedIn={user ? true : false}
+              postId={postData.data?.id}
+              createdBy={comment.userId}
+              parentId={null}
             />
           ))}
         </List>

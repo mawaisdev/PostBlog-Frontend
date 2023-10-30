@@ -8,18 +8,46 @@ import {
 } from '@mui/material'
 import { useState } from 'react'
 import { Comment as CommentType } from '../Types/Responses/Post/PostByIdResponse'
-import { ArrowDropDown, ArrowDropUp, Send } from '@mui/icons-material'
+import { useComments } from '../Contexts/CommentsContext'
+import { ArrowDropDown, ArrowDropUp, Edit, Send } from '@mui/icons-material'
+import axios from '../Api/axios'
+import { useAuth } from '../Hooks/useAuth'
+import { DeleteComment } from './DelteComment'
 
 interface CommentProps {
   comment: CommentType
+  postId?: number
+  parentId: number | null
   isLoggedIn: boolean
+  createdBy: number
 }
 
-export const CommentComponent = ({ comment, isLoggedIn }: CommentProps) => {
+export const CommentComponent = ({
+  comment,
+  postId,
+  isLoggedIn,
+  parentId,
+}: CommentProps) => {
   const [isOpen, setIsOpen] = useState(false)
+  const { comments, setChildComments, removeComment } = useComments()
+  const { user } = useAuth()
 
-  const handleToggle = () => {
+  const handleToggle = async () => {
+    if (!isOpen && comment.hasChild && !comments[comment.comment_id]) {
+      try {
+        const response = await axios.get(
+          `/allcomments/${postId}/comments?parentId=${comment.comment_id}`
+        )
+        if (response.status === 200)
+          setChildComments(comment.comment_id, response.data.data)
+      } catch (error) {
+        console.error('Error fetching child comments:', error)
+      }
+    }
     setIsOpen(!isOpen)
+  }
+  const handleEdit = () => {
+    console.log('edit', { comment }, { postId })
   }
 
   return (
@@ -31,11 +59,34 @@ export const CommentComponent = ({ comment, isLoggedIn }: CommentProps) => {
             {isOpen ? <ArrowDropUp /> : <ArrowDropDown />}
           </IconButton>
         )}
+        {isLoggedIn && user?.id === comment.userId && (
+          <>
+            <IconButton size='small' onClick={handleEdit}>
+              <Edit /> {/* Import EditIcon from @mui/icons-material */}
+            </IconButton>
+            <DeleteComment
+              commentId={comment.comment_id}
+              onDeleteSuccess={() =>
+                removeComment(parentId!, comment.comment_id)
+              }
+            />
+          </>
+        )}
       </ListItem>
 
-      {/* Child comments would go here when isOpen is true */}
       <Collapse in={isOpen} timeout='auto' unmountOnExit>
-        {/* Render child comments here */}
+        {Array.isArray(comments[comment.comment_id]) &&
+          comments[comment.comment_id].map((childComment) => (
+            <div key={childComment.comment_id} style={{ marginLeft: '20px' }}>
+              <CommentComponent
+                comment={childComment}
+                postId={postId}
+                parentId={comment.comment_id} // <-- this comment's ID becomes the parentId for its replies
+                isLoggedIn={isLoggedIn}
+                createdBy={comment.userId}
+              />
+            </div>
+          ))}
       </Collapse>
 
       {isLoggedIn && (

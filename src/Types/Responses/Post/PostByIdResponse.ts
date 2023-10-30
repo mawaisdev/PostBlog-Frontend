@@ -32,5 +32,6 @@ export interface Comment {
   comment_id: number
   comment_text: string
   childCount: string
+  userId: number
   hasChild: boolean
 }
