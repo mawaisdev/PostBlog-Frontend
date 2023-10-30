@@ -13,6 +13,7 @@ import { ArrowDropDown, ArrowDropUp, Edit, Send } from '@mui/icons-material'
 import axios from '../Api/axios'
 import { useAuth } from '../Hooks/useAuth'
 import { DeleteComment } from './DelteComment'
+import { Roles } from '../Types/Responses/User'
 
 interface CommentProps {
   comment: CommentType
@@ -59,19 +60,23 @@ export const CommentComponent = ({
             {isOpen ? <ArrowDropUp /> : <ArrowDropDown />}
           </IconButton>
         )}
-        {isLoggedIn && user?.id === comment.userId && (
-          <>
-            <IconButton size='small' onClick={handleEdit}>
-              <Edit /> {/* Import EditIcon from @mui/icons-material */}
-            </IconButton>
-            <DeleteComment
-              commentId={comment.comment_id}
-              onDeleteSuccess={() =>
-                removeComment(parentId!, comment.comment_id)
-              }
-            />
-          </>
-        )}
+        {isLoggedIn &&
+          user &&
+          (user.id === comment.userId || user.roles.includes(Roles.Admin)) && (
+            <>
+              {user.id === comment.userId && (
+                <IconButton size='small' onClick={handleEdit}>
+                  <Edit />
+                </IconButton>
+              )}
+              <DeleteComment
+                commentId={comment.comment_id}
+                onDeleteSuccess={() =>
+                  removeComment(parentId!, comment.comment_id)
+                }
+              />
+            </>
+          )}
       </ListItem>
 
       <Collapse in={isOpen} timeout='auto' unmountOnExit>
