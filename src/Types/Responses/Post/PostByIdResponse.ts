@@ -1,10 +1,14 @@
 export interface PostByIdResponse {
   status: number
   response: string
-  data?: Post
+  data?: Data
+  commentsPageNumber?: number
+  commentsPageSize?: number
+  commentsTotalCount?: number
+  commentsRemainingCount?: number
 }
 
-export interface Post {
+export interface IPost {
   id: number
   title: string
   body: string
@@ -14,16 +18,19 @@ export interface Post {
   updatedAt: string
   user: User
   category: Category
+}
+
+export interface Data extends IPost {
   comments: Comment[]
 }
 
-interface User {
+export interface User {
   id: number
   userName: string
   email: string
 }
 
-interface Category {
+export interface Category {
   id: number
   name: string
 }
@@ -31,7 +38,7 @@ interface Category {
 export interface Comment {
   comment_id: number
   comment_text: string
-  childCount: string
   userId: number
+  childCount: string
   hasChild: boolean
 }
