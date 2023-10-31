@@ -1,6 +1,6 @@
 import { memo, useEffect, useState } from 'react'
 import { Comment } from '../Types/Responses/Post/PostByIdResponse'
-import { Button, Card, CardContent, Container, Typography } from '@mui/material'
+import { Button, Card, CardContent, Typography } from '@mui/material'
 
 export interface ICommentsSectionProps {
   comments: Comment[]
