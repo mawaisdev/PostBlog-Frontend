@@ -7,6 +7,7 @@ interface CommentsContextType {
   comments: CommentsState
   setChildComments: (parentId: number | null, comments: Comment[]) => void
   removeComment: (parentId: number | null, commentId: number) => void
+  addComment: (parentId: number | null, comment: Comment) => void
 }
 
 export const CommentsContext = createContext<CommentsContextType | undefined>(
@@ -71,9 +72,21 @@ export const CommentsProvider = ({
     })
   }
 
+  const addComment = (parentId: number | null, comment: Comment) => {
+    setComments((prevComments) => {
+      const updatedComments = { ...prevComments }
+      const key = parentId === null ? 'null' : String(parentId)
+
+      if (!updatedComments[key]) updatedComments[key] = []
+      updatedComments[key].push(comment)
+
+      return updatedComments
+    })
+  }
+
   return (
     <CommentsContext.Provider
-      value={{ comments, setChildComments, removeComment }}
+      value={{ comments, setChildComments, removeComment, addComment }}
     >
       {children}
     </CommentsContext.Provider>

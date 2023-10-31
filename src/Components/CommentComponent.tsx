@@ -14,6 +14,7 @@ import axios from '../Api/axios'
 import { useAuth } from '../Hooks/useAuth'
 import { DeleteComment } from './DelteComment'
 import { Roles } from '../Types/Responses/User'
+import { useAxiosPrivate } from '../Hooks/useAxiosPrivate'
 
 interface CommentProps {
   comment: CommentType
@@ -30,7 +31,10 @@ export const CommentComponent = ({
   parentId,
 }: CommentProps) => {
   const [isOpen, setIsOpen] = useState(false)
-  const { comments, setChildComments, removeComment } = useComments()
+  const axiosPrivate = useAxiosPrivate()
+  const [newComment, setNewComment] = useState('')
+  const { comments, setChildComments, removeComment, addComment } =
+    useComments()
   const { user } = useAuth()
 
   const handleToggle = async () => {
@@ -49,6 +53,21 @@ export const CommentComponent = ({
   }
   const handleEdit = () => {
     console.log('edit', { comment }, { postId })
+  }
+  const handleAddComment = async (parentId: number) => {
+    try {
+      const { data } = await axiosPrivate.post(`/comments`, {
+        text: newComment,
+        postId: Number(postId),
+        parentId,
+        userId: Number(user?.id),
+      })
+
+      addComment(parentId, data.data) // Assuming data.comment is the new comment returned from the server
+      setNewComment('')
+    } catch (error) {
+      console.error('Failed to add comment:', error)
+    }
   }
 
   return (
@@ -82,13 +101,17 @@ export const CommentComponent = ({
       <Collapse in={isOpen} timeout='auto' unmountOnExit>
         {Array.isArray(comments[comment.comment_id]) &&
           comments[comment.comment_id].map((childComment) => (
-            <div key={childComment.comment_id} style={{ marginLeft: '20px' }}>
+            <div
+              key={`${comment.comment_id}_${childComment.comment_id}`}
+              style={{ marginLeft: '20px' }}
+            >
               <CommentComponent
                 comment={childComment}
                 postId={postId}
-                parentId={comment.comment_id} // <-- this comment's ID becomes the parentId for its replies
+                parentId={comment.comment_id}
                 isLoggedIn={isLoggedIn}
                 createdBy={comment.userId}
+                key={childComment.comment_id} // Add this key prop
               />
             </div>
           ))}
@@ -100,17 +123,28 @@ export const CommentComponent = ({
           spacing={2}
           style={{ marginTop: '10px', marginBottom: '10px' }}
         >
-          <Grid item xs={9} md={10}>
-            <TextField
-              label='Reply to this comment'
-              variant='outlined'
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={3} md={2}>
-            <IconButton color='primary'>
-              <Send />
-            </IconButton>
+          <Grid
+            container
+            style={{ marginTop: '10px', marginBottom: '10px' }}
+            ml={8}
+          >
+            <Grid item xs={9} md={10}>
+              <TextField
+                label='Reply to this comment'
+                variant='outlined'
+                fullWidth
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={3} md={2}>
+              <IconButton
+                color='primary'
+                onClick={() => handleAddComment(comment.comment_id)}
+              >
+                <Send />
+              </IconButton>
+            </Grid>
           </Grid>
         </Grid>
       )}

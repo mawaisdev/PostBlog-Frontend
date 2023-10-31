@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import axios from '../Api/axios'
 import { AxiosError } from 'axios'
 import {
   Card,
@@ -23,12 +22,15 @@ import { NotFound404 } from '../Pages/NotFound404Page'
 import { ResponsiveCircularProgress } from './ResponsiveCircularProgress'
 import { Send } from '@mui/icons-material'
 import { useComments } from '../Contexts/CommentsContext'
+import { useAxiosPrivate } from '../Hooks/useAxiosPrivate'
 
 export const Post = () => {
   const { id } = useParams<{ id: string }>()
   const [postData, setPostData] = useState<PostByIdResponse | null>(null)
+  const axiosPrivate = useAxiosPrivate()
   const { user } = useAuth()
-  const { comments, setChildComments } = useComments() // Destructure comments from context
+  const { comments, setChildComments, addComment } = useComments() // Destructure comments from context
+  const [newComment, setNewComment] = useState('')
 
   useEffect(() => {
     let isMounted = true
@@ -36,12 +38,15 @@ export const Post = () => {
 
     const getPost = async () => {
       try {
-        const { data } = await axios.get<PostByIdResponse>(`/posts/${id}`, {
-          signal: controller.signal,
-        })
+        const { data } = await axiosPrivate.get<PostByIdResponse>(
+          `/posts/${id}`,
+          {
+            signal: controller.signal,
+          }
+        )
         if (isMounted) {
           setPostData(data)
-          console.log('Post Data: ', { postData })
+          console.log(data)
           setChildComments(null, data.data?.comments || [])
         }
       } catch (error: AxiosError | any) {
@@ -69,6 +74,24 @@ export const Post = () => {
   }
   if (postData?.status === 404) {
     return <NotFound404 />
+  }
+
+  const handleAddComment = async () => {
+    try {
+      const { data } = await axiosPrivate.post(`/comments`, {
+        text: newComment,
+        postId: Number(id),
+        parentId: null,
+        userId: Number(user?.id),
+      })
+
+      console.log(data.data)
+
+      addComment(null, data.data) // Assuming data.comment is the new comment returned from the server
+      setNewComment('')
+    } catch (error) {
+      console.error('Failed to add comment:', error)
+    }
   }
 
   return (
@@ -102,11 +125,12 @@ export const Post = () => {
               label='Add a comment'
               variant='outlined'
               fullWidth
-              // add onChange and other required props
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
             />
           </Grid>
           <Grid item xs={3} md={2}>
-            <IconButton color='primary'>
+            <IconButton color='primary' onClick={handleAddComment}>
               <Send />
             </IconButton>
           </Grid>
@@ -125,7 +149,6 @@ export const Post = () => {
       <CardContent sx={{ m: 2 }}>
         <Typography variant='h6'>Comments</Typography>
         <List>
-          {/* Render main comments directly from the context */}
           {comments['null']?.map((comment) => (
             <CommentComponent
               key={comment.comment_id}
