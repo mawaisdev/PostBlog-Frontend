@@ -5,7 +5,14 @@ type CommentsState = Record<string, Comment[]>
 
 interface CommentsContextType {
   comments: CommentsState
-  setChildComments: (parentId: number | null, comments: Comment[]) => void
+  setChildComments: (
+    parentId: number | null,
+    comments: Comment[],
+    commentsPageNumber?: number,
+    commentsPageSize?: number,
+    commentsTotalCount?: number,
+    commentsRemainingCount?: number
+  ) => void
   removeComment: (parentId: number | null, commentId: number) => void
   addComment: (parentId: number | null, comment: Comment) => void
 }
@@ -25,6 +32,7 @@ export const CommentsProvider = ({
     parentId: number | null,
     childComments: Comment[]
   ) => {
+    console.log('State of Comments: ', comments)
     setComments((prevComments) => ({
       ...prevComments,
       [String(parentId)]: childComments,
@@ -78,7 +86,7 @@ export const CommentsProvider = ({
       const key = parentId === null ? 'null' : String(parentId)
 
       if (!updatedComments[key]) updatedComments[key] = []
-      updatedComments[key].push(comment)
+      updatedComments[key].unshift(comment)
 
       return updatedComments
     })

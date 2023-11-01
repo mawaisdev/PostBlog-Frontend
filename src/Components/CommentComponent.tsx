@@ -5,9 +5,13 @@ import {
   Collapse,
   TextField,
   Grid,
+  Button,
 } from '@mui/material'
 import { useState } from 'react'
-import { Comment as CommentType } from '../Types/Responses/Post/PostByIdResponse'
+import {
+  Comment as CommentType,
+  GetChildCommentsResponse,
+} from '../Types/Responses/Post/PostByIdResponse'
 import { useComments } from '../Contexts/CommentsContext'
 import { ArrowDropDown, ArrowDropUp, Edit, Send } from '@mui/icons-material'
 import axios from '../Api/axios'
@@ -22,6 +26,7 @@ interface CommentProps {
   parentId: number | null
   isLoggedIn: boolean
   createdBy: number
+  handleShowMore: (parentId: number | null) => void
 }
 
 export const CommentComponent = ({
@@ -29,6 +34,7 @@ export const CommentComponent = ({
   postId,
   isLoggedIn,
   parentId,
+  handleShowMore,
 }: CommentProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const axiosPrivate = useAxiosPrivate()
@@ -40,11 +46,11 @@ export const CommentComponent = ({
   const handleToggle = async () => {
     if (!isOpen && comment.hasChild && !comments[comment.comment_id]) {
       try {
-        const response = await axios.get(
+        const { data } = await axios.get<GetChildCommentsResponse>(
           `/allcomments/${postId}/comments?parentId=${comment.comment_id}`
         )
-        if (response.status === 200)
-          setChildComments(comment.comment_id, response.data.data)
+        if (data.status === 200) setChildComments(comment.comment_id, data.data)
+        console.log('child comments', data)
       } catch (error) {
         console.error('Error fetching child comments:', error)
       }
@@ -112,9 +118,13 @@ export const CommentComponent = ({
                 isLoggedIn={isLoggedIn}
                 createdBy={comment.userId}
                 key={childComment.comment_id} // Add this key prop
+                handleShowMore={handleShowMore}
               />
             </div>
           ))}
+        <Button onClick={() => handleShowMore(comment.comment_id)}>
+          Show More Comments{' '}
+        </Button>
       </Collapse>
 
       {isLoggedIn && (

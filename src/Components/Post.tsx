@@ -13,8 +13,12 @@ import {
   TextField,
   Grid,
   IconButton,
+  Button,
 } from '@mui/material'
-import { PostByIdResponse } from '../Types/Responses/Post/PostByIdResponse'
+import {
+  GetChildCommentsResponse,
+  PostByIdResponse,
+} from '../Types/Responses/Post/PostByIdResponse'
 import { formatDate } from '../Utils/DateFormat'
 import { CommentComponent } from './CommentComponent'
 import { useAuth } from '../Hooks/useAuth'
@@ -23,6 +27,7 @@ import { ResponsiveCircularProgress } from './ResponsiveCircularProgress'
 import { Send } from '@mui/icons-material'
 import { useComments } from '../Contexts/CommentsContext'
 import { useAxiosPrivate } from '../Hooks/useAxiosPrivate'
+import axios from '../Api/axios'
 
 export const Post = () => {
   const { id } = useParams<{ id: string }>()
@@ -94,6 +99,27 @@ export const Post = () => {
     }
   }
 
+  const handleShowMore = async (
+    parentId: number | null = null,
+    pageNumber: number,
+    perPage: number
+  ) => {
+    const url = parentId
+      ? `/allcomments/${id}/comments?parentId=${parentId}&page=${pageNumber}&perPage=${perPage}`
+      : `/allcomments/${id}/comments?page=${pageNumber}&perPage=${perPage}`
+    console.log(
+      `Handle Show More With Parent Id: ${parentId} & PageNumber: ${pageNumber} & PerPage: ${perPage}`
+    )
+    try {
+      const { data } = await axios.get<GetChildCommentsResponse>(url)
+      if (data.status === 200) setChildComments(parentId, data.data)
+
+      console.log('Fetched With Show More', data)
+    } catch (error) {
+      console.error('Error fetching child comments:', error)
+    }
+  }
+
   return (
     <Card variant='outlined' style={{ marginTop: 20, marginBottom: 20 }}>
       <Stack direction='row' justifyContent='space-between'>
@@ -157,9 +183,27 @@ export const Post = () => {
               postId={postData.data?.id}
               createdBy={comment.userId}
               parentId={null}
+              handleShowMore={() =>
+                handleShowMore(
+                  comment.comment_id,
+                  postData.pageNumber!,
+                  postData.pageSize!
+                )
+              }
             />
           ))}
         </List>
+        {' Main Comments End Here'}
+        {postData.remainingCommentsCount &&
+        postData.remainingCommentsCount > 0 ? (
+          <Button
+            onClick={() =>
+              handleShowMore(null, postData.pageNumber! + 1, postData.pageSize!)
+            }
+          >
+            Show More Comments{' '}
+          </Button>
+        ) : null}
       </CardContent>
     </Card>
   )

@@ -2,6 +2,10 @@ export interface PostByIdResponse {
   status: number
   response: string
   data?: Post
+  pageNumber?: number
+  pageSize?: number
+  totalCommentsCount?: number
+  remainingCommentsCount?: number
 }
 
 export interface Post {
@@ -34,4 +38,16 @@ export interface Comment {
   childCount: string
   userId: number
   hasChild: boolean
+}
+
+export interface PaginatedComments {
+  data: Comment[]
+  totalCommentsCount: number
+  remainingCommentsCount: number
+  pageNumber: number
+  pageSize: number
+}
+export interface GetChildCommentsResponse extends PaginatedComments {
+  status: number
+  response: string
 }
