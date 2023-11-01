@@ -17,6 +17,7 @@ import {
 } from '@mui/material'
 import {
   GetChildCommentsResponse,
+  PaginatedComments,
   PostByIdResponse,
 } from '../Types/Responses/Post/PostByIdResponse'
 import { formatDate } from '../Utils/DateFormat'
@@ -52,7 +53,19 @@ export const Post = () => {
         if (isMounted) {
           setPostData(data)
           console.log(data)
-          setChildComments(null, data.data?.comments || [])
+          const commentsData: PaginatedComments = {
+            data: data.data?.comments || [],
+            pageNumber: data.pageNumber ? data.pageNumber : 1,
+            pageSize: data.pageSize ? data.pageSize : 5,
+            totalCommentsCount: data.totalCommentsCount
+              ? data.totalCommentsCount
+              : 1,
+            remainingCommentsCount: data.remainingCommentsCount
+              ? data.remainingCommentsCount
+              : 0,
+          }
+
+          setChildComments(null, commentsData)
         }
       } catch (error: AxiosError | any) {
         if (error.response?.status === 404) {
@@ -104,21 +117,88 @@ export const Post = () => {
     pageNumber: number,
     perPage: number
   ) => {
+    // const pageSize =
+    //   comments[`${parentId}`].remainingCommentsCount < perPage
+    //     ? comments[`${parentId}`].remainingCommentsCount
+    //     : perPage
     const url = parentId
-      ? `/allcomments/${id}/comments?parentId=${parentId}&page=${pageNumber}&perPage=${perPage}`
+      ? `/allcomments/${id}/comments?parentId=${parentId}&page=${pageNumber}&perPage=${5}`
       : `/allcomments/${id}/comments?page=${pageNumber}&perPage=${perPage}`
     console.log(
-      `Handle Show More With Parent Id: ${parentId} & PageNumber: ${pageNumber} & PerPage: ${perPage}`
+      `Handle Show More With Parent Id: ${parentId} & PageNumber: ${pageNumber} & PerPage: ${5}`
     )
     try {
       const { data } = await axios.get<GetChildCommentsResponse>(url)
-      if (data.status === 200) setChildComments(parentId, data.data)
+      const commentsData: PaginatedComments = data
+      if (data.status === 200) setChildComments(parentId, commentsData)
 
       console.log('Fetched With Show More', data)
     } catch (error) {
       console.error('Error fetching child comments:', error)
     }
   }
+
+  // New Handle Show More
+  // const handleShowMore = async (
+  //   parentId: number | null = null,
+  //   pageNumber: number,
+  //   perPage: number
+  // ) => {
+  //   const pageSize =
+  //     comments[`${parentId}`].remainingCommentsCount < perPage
+  //       ? comments[`${parentId}`].remainingCommentsCount
+  //       : perPage
+  //   const url = parentId
+  //     ? `/allcomments/${id}/comments?parentId=${parentId}&page=${pageNumber}&perPage=${pageSize}`
+  //     : `/allcomments/${id}/comments?page=${pageNumber}&perPage=${pageSize}`
+
+  //   console.log(
+  //     `Handle Show More With Parent Id: ${parentId} & PageNumber: ${pageNumber} & PerPage: ${pageSize}`
+  //   )
+
+  //   try {
+  //     const { data } = await axios.get<GetChildCommentsResponse>(url)
+
+  //     if (data.status === 200) {
+  //       // Deduplicate comments before updating the state
+  //       const existingComments = comments[`${parentId}`]?.data || []
+  //       const newComments = data.data
+  //       const deduplicatedComments = deduplicateComments(
+  //         existingComments,
+  //         newComments
+  //       )
+
+  //       // Update the state with deduplicated comments
+  //       const updatedCommentsData: PaginatedComments = {
+  //         data: deduplicatedComments,
+  //         pageNumber: data.pageNumber || 1,
+  //         pageSize: data.pageSize || perPage,
+  //         totalCommentsCount:
+  //           data.totalCommentsCount || deduplicatedComments.length,
+  //         remainingCommentsCount: data.remainingCommentsCount || 0,
+  //       }
+  //       setChildComments(parentId, updatedCommentsData)
+  //     }
+
+  //     console.log('Fetched With Show More', data)
+  //   } catch (error) {
+  //     console.error('Error fetching child comments:', error)
+  //   }
+  // }
+
+  // // Helper function to deduplicate comments
+  // const deduplicateComments = (
+  //   existingComments: Comment[],
+  //   newComments: Comment[]
+  // ) => {
+  //   const commentIds = new Set(
+  //     existingComments.map((comment) => comment.comment_id)
+  //   )
+  //   return [
+  //     ...existingComments,
+  //     ...newComments.filter((comment) => !commentIds.has(comment.comment_id)),
+  //   ]
+  // }
 
   return (
     <Card variant='outlined' style={{ marginTop: 20, marginBottom: 20 }}>
@@ -175,9 +255,9 @@ export const Post = () => {
       <CardContent sx={{ m: 2 }}>
         <Typography variant='h6'>Comments</Typography>
         <List>
-          {comments['null']?.map((comment) => (
+          {comments['null']?.data.map((comment) => (
             <CommentComponent
-              key={comment.comment_id}
+              key={`${comments['null'].pageNumber}_${comment.comment_id}`}
               comment={comment}
               isLoggedIn={user ? true : false}
               postId={postData.data?.id}
@@ -194,11 +274,14 @@ export const Post = () => {
           ))}
         </List>
         {' Main Comments End Here'}
-        {postData.remainingCommentsCount &&
-        postData.remainingCommentsCount > 0 ? (
+        {comments['null'].totalCommentsCount != comments['null'].data.length ? (
           <Button
             onClick={() =>
-              handleShowMore(null, postData.pageNumber! + 1, postData.pageSize!)
+              handleShowMore(
+                null,
+                comments['null'].pageNumber + 1,
+                comments['null'].pageSize
+              )
             }
           >
             Show More Comments{' '}

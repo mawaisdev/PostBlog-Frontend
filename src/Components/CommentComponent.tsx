@@ -11,6 +11,7 @@ import { useState } from 'react'
 import {
   Comment as CommentType,
   GetChildCommentsResponse,
+  PaginatedComments,
 } from '../Types/Responses/Post/PostByIdResponse'
 import { useComments } from '../Contexts/CommentsContext'
 import { ArrowDropDown, ArrowDropUp, Edit, Send } from '@mui/icons-material'
@@ -49,7 +50,10 @@ export const CommentComponent = ({
         const { data } = await axios.get<GetChildCommentsResponse>(
           `/allcomments/${postId}/comments?parentId=${comment.comment_id}`
         )
-        if (data.status === 200) setChildComments(comment.comment_id, data.data)
+        if (data.status === 200) {
+          const commentData: PaginatedComments = data as PaginatedComments
+          setChildComments(comment.comment_id, commentData)
+        }
         console.log('child comments', data)
       } catch (error) {
         console.error('Error fetching child comments:', error)
@@ -106,7 +110,7 @@ export const CommentComponent = ({
 
       <Collapse in={isOpen} timeout='auto' unmountOnExit>
         {Array.isArray(comments[comment.comment_id]) &&
-          comments[comment.comment_id].map((childComment) => (
+          comments[comment.comment_id].data.map((childComment) => (
             <div
               key={`${comment.comment_id}_${childComment.comment_id}`}
               style={{ marginLeft: '20px' }}
