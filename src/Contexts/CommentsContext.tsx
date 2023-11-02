@@ -1,107 +1,3 @@
-// import { createContext, useContext, useState } from 'react'
-// import { Comment } from '../Types/Responses/Post/PostByIdResponse'
-
-// type CommentsState = Record<string, Comment[]>
-
-// interface CommentsContextType {
-//   comments: CommentsState
-//   setChildComments: (parentId: number | null, comments: Comment[]) => void
-//   removeComment: (parentId: number | null, commentId: number) => void
-//   addComment: (parentId: number | null, comment: Comment) => void
-// }
-
-// export const CommentsContext = createContext<CommentsContextType | undefined>(
-//   undefined
-// )
-
-// export const CommentsProvider = ({
-//   children,
-// }: {
-//   children: React.ReactNode
-// }) => {
-//   const [comments, setComments] = useState<CommentsState>({})
-
-//   const setChildComments = (
-//     parentId: number | null,
-//     childComments: Comment[]
-//   ) => {
-//     setComments((prevComments) => ({
-//       ...prevComments,
-//       [String(parentId)]: childComments,
-//     }))
-//   }
-
-//   const removeComment = (parentId: number | null, commentId: number) => {
-//     setComments((prevComments) => {
-//       const updatedCommentsState = { ...prevComments }
-
-//       if (parentId === null) {
-//         // Main comment
-//         // Remove the standalone main comment
-//         if (updatedCommentsState['null']) {
-//           updatedCommentsState['null'] = updatedCommentsState['null'].filter(
-//             (comment) => comment.comment_id !== commentId
-//           )
-
-//           // If after deletion, there are no main comments, remove the "null" key
-//           if (updatedCommentsState['null'].length === 0) {
-//             delete updatedCommentsState['null']
-//           }
-//         }
-//       } else {
-//         // Child comment
-//         // Remove the child comment
-//         if (updatedCommentsState[String(parentId)]) {
-//           updatedCommentsState[String(parentId)] = updatedCommentsState[
-//             String(parentId)
-//           ].filter((comment) => comment.comment_id !== commentId)
-
-//           // If after deletion, the parent has no more children, remove the key
-//           if (updatedCommentsState[String(parentId)].length === 0) {
-//             delete updatedCommentsState[String(parentId)]
-//           }
-//         }
-
-//         // If this child comment is also a parent to others, remove its key
-//         if (updatedCommentsState[String(commentId)]) {
-//           delete updatedCommentsState[String(commentId)]
-//         }
-//       }
-
-//       return updatedCommentsState
-//     })
-//   }
-
-//   const addComment = (parentId: number | null, comment: Comment) => {
-//     setComments((prevComments) => {
-//       const updatedComments = { ...prevComments }
-//       const key = parentId === null ? 'null' : String(parentId)
-
-//       if (!updatedComments[key]) updatedComments[key] = []
-//       updatedComments[key].push(comment)
-
-//       return updatedComments
-//     })
-//   }
-
-//   return (
-//     <CommentsContext.Provider
-//       value={{ comments, setChildComments, removeComment, addComment }}
-//     >
-//       {children}
-//     </CommentsContext.Provider>
-//   )
-// }
-
-// export function useComments() {
-//   const context = useContext(CommentsContext)
-//   if (!context) {
-//     throw new Error('useComments must be used within a CommentsProvider')
-//   }
-//   return context
-// }
-
-// New Comments Context
 import { createContext, useContext, useState } from 'react'
 import {
   Comment,
@@ -118,6 +14,7 @@ interface CommentsContextType {
   ) => void
   removeComment: (parentId: number | null, commentId: number) => void
   addComment: (parentId: number | null, comment: Comment) => void
+  resetComments: () => void
 }
 
 export const CommentsContext = createContext<CommentsContextType | undefined>(
@@ -131,37 +28,6 @@ export const CommentsProvider = ({
 }) => {
   const [comments, setComments] = useState<CommentsState>({})
 
-  // const setChildComments = (
-  //   parentId: number | null,
-  //   paginatedComments: PaginatedComments
-  // ) => {
-  //   setComments((prevComments) => {
-  //     const existingPaginatedComments = prevComments[String(parentId)]
-
-  //     if (existingPaginatedComments) {
-  //       // Append new comments to the existing array
-  //       existingPaginatedComments.data = existingPaginatedComments.data.concat(
-  //         paginatedComments.data
-  //       )
-
-  //       // Update page number and page size
-  //       existingPaginatedComments.pageNumber = paginatedComments.pageNumber
-  //       existingPaginatedComments.pageSize = paginatedComments.pageNumber
-  //     } else {
-  //       // Create a new PaginatedComments object
-  //       const newPaginatedComments: PaginatedComments = {
-  //         ...paginatedComments,
-  //       }
-
-  //       prevComments[String(parentId)] = newPaginatedComments
-  //     }
-
-  //     return { ...prevComments }
-  //   })
-  //   console.log('State of comments', { comments })
-  // }
-
-  // New setChildComments
   const setChildComments = (
     parentId: number | null,
     paginatedComments: PaginatedComments
@@ -257,9 +123,22 @@ export const CommentsProvider = ({
     })
   }
 
+  const resetComments = (): void => {
+    console.log('Resetting comments')
+
+    setComments((_) => ({})) // Reset the comments state to an empty object
+    console.log('Comments State: ', comments)
+  }
+
   return (
     <CommentsContext.Provider
-      value={{ comments, setChildComments, removeComment, addComment }}
+      value={{
+        comments,
+        setChildComments,
+        removeComment,
+        addComment,
+        resetComments,
+      }}
     >
       {children}
     </CommentsContext.Provider>

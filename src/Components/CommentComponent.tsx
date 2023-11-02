@@ -27,7 +27,11 @@ interface CommentProps {
   parentId: number | null
   isLoggedIn: boolean
   createdBy: number
-  handleShowMore: (parentId: number | null) => void
+  handleShowMore: (
+    parentId: number | null,
+    pageNumber: number,
+    perPage: number
+  ) => void
 }
 
 export const CommentComponent = ({
@@ -40,19 +44,73 @@ export const CommentComponent = ({
   const [isOpen, setIsOpen] = useState(false)
   const axiosPrivate = useAxiosPrivate()
   const [newComment, setNewComment] = useState('')
+  const [pageNumber, setPageNumber] = useState(1)
   const { comments, setChildComments, removeComment, addComment } =
     useComments()
   const { user } = useAuth()
 
+  const handleShow = async (
+    parentId: number | null,
+    pageNumber: number,
+    pageSize: number
+  ) => {
+    console.log(
+      `Child Comments Requesting More Comments With Page Number: ${pageNumber}, Page Size: ${pageSize} and ParentId: ${parentId}`
+    )
+    const handleShowMore = async (
+      parentId: number | null = null,
+      pageNumber: number,
+      perPage: number
+    ) => {
+      const url = parentId
+        ? `/allcomments/${postId}/comments?parentId=${parentId}&page=${pageNumber}&perPage=${5}`
+        : `/allcomments/${postId}/comments?page=${pageNumber}&perPage=${perPage}`
+      console.log(
+        `Handle Show More With Parent Id: ${parentId} & PageNumber: ${pageNumber} & PerPage: ${5}`
+      )
+      try {
+        const { data } = await axios.get<GetChildCommentsResponse>(url)
+        const commentsData: PaginatedComments = data
+        if (data.status === 200) setChildComments(parentId, commentsData)
+
+        console.log('Fetched With Show More', data)
+      } catch (error) {
+        console.error('Error fetching child comments:', error)
+      }
+    }
+
+    await handleShowMore(parentId, pageNumber, pageSize)
+  }
+
   const handleToggle = async () => {
-    if (!isOpen && comment.hasChild && !comments[comment.comment_id]) {
+    if (!isOpen && comment.hasChild) {
+      // Check if comments for the specific parent comment are already in the context
+      if (comments[comment.comment_id]) {
+        // Comments are already in the context, use them
+        setIsOpen(!isOpen)
+        return
+      }
+    }
+    if (!isOpen && comment.hasChild) {
       try {
         const { data } = await axios.get<GetChildCommentsResponse>(
-          `/allcomments/${postId}/comments?parentId=${comment.comment_id}`
+          `/allcomments/${postId}/comments?parentId=${
+            comment.comment_id
+          }&page=${pageNumber}&perPage=${5}`
         )
         if (data.status === 200) {
-          const commentData: PaginatedComments = data as PaginatedComments
-          setChildComments(comment.comment_id, commentData)
+          const commentData: PaginatedComments = {
+            data: data.data,
+            pageNumber: data.pageNumber,
+            pageSize: data.pageSize,
+            remainingCommentsCount: data.remainingCommentsCount,
+            totalCommentsCount: data.totalCommentsCount,
+          }
+
+          // Assuming you have a setChildComments function in your context
+          setChildComments(comment.comment_id, commentData) // Update context with child comments
+          setPageNumber(pageNumber + 1) // Increment the page number
+          setIsOpen(!isOpen)
         }
         console.log('child comments', data)
       } catch (error) {
@@ -61,6 +119,7 @@ export const CommentComponent = ({
     }
     setIsOpen(!isOpen)
   }
+
   const handleEdit = () => {
     console.log('edit', { comment }, { postId })
   }
@@ -109,26 +168,38 @@ export const CommentComponent = ({
       </ListItem>
 
       <Collapse in={isOpen} timeout='auto' unmountOnExit>
-        {Array.isArray(comments[comment.comment_id]) &&
-          comments[comment.comment_id].data.map((childComment) => (
-            <div
-              key={`${comment.comment_id}_${childComment.comment_id}`}
-              style={{ marginLeft: '20px' }}
+        {comments[comment.comment_id]?.data?.map((childComment) => (
+          <div
+            key={`${comment.comment_id}_${childComment.comment_id}`}
+            style={{ marginLeft: '20px' }}
+          >
+            <CommentComponent
+              comment={childComment}
+              postId={postId}
+              parentId={comment.comment_id}
+              isLoggedIn={isLoggedIn}
+              createdBy={comment.userId}
+              key={childComment.comment_id} // Add this key prop
+              handleShowMore={handleShowMore}
+            />
+          </div>
+        ))}
+        {comments[comment.comment_id] ? (
+          comments[comment.comment_id].totalCommentsCount ===
+          comments[comment.comment_id].data.length ? null : (
+            <Button
+              onClick={() =>
+                handleShow(
+                  comment.comment_id,
+                  comments[comment.comment_id].pageNumber + 1,
+                  comments[comment.comment_id].pageSize
+                )
+              }
             >
-              <CommentComponent
-                comment={childComment}
-                postId={postId}
-                parentId={comment.comment_id}
-                isLoggedIn={isLoggedIn}
-                createdBy={comment.userId}
-                key={childComment.comment_id} // Add this key prop
-                handleShowMore={handleShowMore}
-              />
-            </div>
-          ))}
-        <Button onClick={() => handleShowMore(comment.comment_id)}>
-          Show More Comments{' '}
-        </Button>
+              Show More Comments{' '}
+            </Button>
+          )
+        ) : null}
       </Collapse>
 
       {isLoggedIn && (

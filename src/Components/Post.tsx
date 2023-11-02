@@ -35,7 +35,8 @@ export const Post = () => {
   const [postData, setPostData] = useState<PostByIdResponse | null>(null)
   const axiosPrivate = useAxiosPrivate()
   const { user } = useAuth()
-  const { comments, setChildComments, addComment } = useComments() // Destructure comments from context
+  const { comments, setChildComments, addComment, resetComments } =
+    useComments() // Destructure comments from context
   const [newComment, setNewComment] = useState('')
 
   useEffect(() => {
@@ -83,6 +84,7 @@ export const Post = () => {
     return () => {
       isMounted = false
       controller.abort()
+      resetComments()
     }
   }, [id]) // Only id in the dependency array// Keep only id in the dependency array to avoid infinite requests
 
@@ -117,10 +119,6 @@ export const Post = () => {
     pageNumber: number,
     perPage: number
   ) => {
-    // const pageSize =
-    //   comments[`${parentId}`].remainingCommentsCount < perPage
-    //     ? comments[`${parentId}`].remainingCommentsCount
-    //     : perPage
     const url = parentId
       ? `/allcomments/${id}/comments?parentId=${parentId}&page=${pageNumber}&perPage=${5}`
       : `/allcomments/${id}/comments?page=${pageNumber}&perPage=${perPage}`
@@ -137,68 +135,6 @@ export const Post = () => {
       console.error('Error fetching child comments:', error)
     }
   }
-
-  // New Handle Show More
-  // const handleShowMore = async (
-  //   parentId: number | null = null,
-  //   pageNumber: number,
-  //   perPage: number
-  // ) => {
-  //   const pageSize =
-  //     comments[`${parentId}`].remainingCommentsCount < perPage
-  //       ? comments[`${parentId}`].remainingCommentsCount
-  //       : perPage
-  //   const url = parentId
-  //     ? `/allcomments/${id}/comments?parentId=${parentId}&page=${pageNumber}&perPage=${pageSize}`
-  //     : `/allcomments/${id}/comments?page=${pageNumber}&perPage=${pageSize}`
-
-  //   console.log(
-  //     `Handle Show More With Parent Id: ${parentId} & PageNumber: ${pageNumber} & PerPage: ${pageSize}`
-  //   )
-
-  //   try {
-  //     const { data } = await axios.get<GetChildCommentsResponse>(url)
-
-  //     if (data.status === 200) {
-  //       // Deduplicate comments before updating the state
-  //       const existingComments = comments[`${parentId}`]?.data || []
-  //       const newComments = data.data
-  //       const deduplicatedComments = deduplicateComments(
-  //         existingComments,
-  //         newComments
-  //       )
-
-  //       // Update the state with deduplicated comments
-  //       const updatedCommentsData: PaginatedComments = {
-  //         data: deduplicatedComments,
-  //         pageNumber: data.pageNumber || 1,
-  //         pageSize: data.pageSize || perPage,
-  //         totalCommentsCount:
-  //           data.totalCommentsCount || deduplicatedComments.length,
-  //         remainingCommentsCount: data.remainingCommentsCount || 0,
-  //       }
-  //       setChildComments(parentId, updatedCommentsData)
-  //     }
-
-  //     console.log('Fetched With Show More', data)
-  //   } catch (error) {
-  //     console.error('Error fetching child comments:', error)
-  //   }
-  // }
-
-  // // Helper function to deduplicate comments
-  // const deduplicateComments = (
-  //   existingComments: Comment[],
-  //   newComments: Comment[]
-  // ) => {
-  //   const commentIds = new Set(
-  //     existingComments.map((comment) => comment.comment_id)
-  //   )
-  //   return [
-  //     ...existingComments,
-  //     ...newComments.filter((comment) => !commentIds.has(comment.comment_id)),
-  //   ]
-  // }
 
   return (
     <Card variant='outlined' style={{ marginTop: 20, marginBottom: 20 }}>
