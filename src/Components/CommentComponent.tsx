@@ -45,9 +45,10 @@ export const CommentComponent = ({
   const axiosPrivate = useAxiosPrivate()
   const [newComment, setNewComment] = useState('')
   const [pageNumber, setPageNumber] = useState(1)
-  const { comments, setChildComments, removeComment, addComment } =
+  const { comments, setChildComments, removeComment, addComment, showLess } =
     useComments()
   const { user } = useAuth()
+  const [showMoreClicked, setShowMoreClicked] = useState(false)
 
   const handleShow = async (
     parentId: number | null,
@@ -81,7 +82,10 @@ export const CommentComponent = ({
 
     await handleShowMore(parentId, pageNumber, pageSize)
   }
-
+  const handleShowLess = (parentId: number | null) => {
+    showLess(String(parentId))
+    setShowMoreClicked(false)
+  }
   const handleToggle = async () => {
     if (!isOpen && comment.hasChild) {
       // Check if comments for the specific parent comment are already in the context
@@ -199,6 +203,11 @@ export const CommentComponent = ({
               Show More Comments{' '}
             </Button>
           )
+        ) : null}
+        {showMoreClicked ? (
+          <Button onClick={() => handleShowLess(comment.comment_id)}>
+            Show Less
+          </Button>
         ) : null}
       </Collapse>
 

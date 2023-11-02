@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState } from 'react'
 import {
   Comment,
   PaginatedComments,
@@ -14,7 +14,8 @@ interface CommentsContextType {
   ) => void
   removeComment: (parentId: number | null, commentId: number) => void
   addComment: (parentId: number | null, comment: Comment) => void
-  resetComments: () => void
+  setComments: React.Dispatch<React.SetStateAction<CommentsState>>
+  showLess: (parentId: string) => void
 }
 
 export const CommentsContext = createContext<CommentsContextType | undefined>(
@@ -103,31 +104,51 @@ export const CommentsProvider = ({
 
       if (paginatedComments) {
         // Append the new comment to the existing data
-        paginatedComments.data = paginatedComments.data.concat(comment)
+        paginatedComments.data.unshift(comment)
+        if (paginatedComments.data.length > paginatedComments.pageSize)
+          paginatedComments.data.pop() // Remove the last comment from the array if the
         paginatedComments.totalCommentsCount += 1 // Update the total comments count
         paginatedComments.remainingCommentsCount += 1 // Update the remaining comments count
       } else {
         // Create a new PaginatedComments object
         const newPaginatedComments: PaginatedComments = {
           data: [comment],
-          totalCommentsCount: 1,
-          remainingCommentsCount: 1,
+          totalCommentsCount: 0,
+          remainingCommentsCount: 0,
           pageNumber: 1, // You might need to update this based on your logic
-          pageSize: 1, // You might need to update this based on your logic
+          pageSize: 5, // You might need to update this based on your logic
         }
 
         updatedComments[key] = newPaginatedComments
       }
 
+      console.log('Updated Comments', { updatedComments })
       return updatedComments
     })
   }
 
-  const resetComments = (): void => {
-    console.log('Resetting comments')
+  const showLess = (parentId: string) => {
+    setComments((prevComments) => {
+      const updatedCommentsState = { ...prevComments }
 
-    setComments((_) => ({})) // Reset the comments state to an empty object
-    console.log('Comments State: ', comments)
+      if (updatedCommentsState[parentId]) {
+        const paginatedComments = updatedCommentsState[parentId]
+
+        if (paginatedComments.data.length > 5) {
+          // Trim the data array to keep only the latest 5 elements
+          paginatedComments.data = paginatedComments.data.slice(0, 5)
+
+          // Reset the page number to 1
+          paginatedComments.pageNumber = 1
+
+          // Reset the remaining comments count based on the total comment count
+          paginatedComments.remainingCommentsCount =
+            paginatedComments.totalCommentsCount - 5
+        }
+      }
+
+      return updatedCommentsState
+    })
   }
 
   return (
@@ -137,7 +158,8 @@ export const CommentsProvider = ({
         setChildComments,
         removeComment,
         addComment,
-        resetComments,
+        setComments,
+        showLess,
       }}
     >
       {children}

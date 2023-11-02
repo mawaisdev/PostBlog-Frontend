@@ -4,17 +4,20 @@ import axios from '../Api/axios'
 import { GetAllPostsResponse } from '../Types/Responses/Post/GetAllPostsResponse'
 import { PostCard } from '../Components/PostCard'
 import { AxiosError } from 'axios'
+import { useComments } from '../Contexts/CommentsContext'
 
 export const PostsPage = () => {
   const [allPosts, setAllPosts] = useState<GetAllPostsResponse>()
   const [page, setPage] = useState(1)
   const pageSize = 10
+  const { setComments } = useComments()
 
   useEffect(() => {
     let isMounted = true
     const conntroller = new AbortController()
     const skipValue = (page - 1) * pageSize
     const takeValue = pageSize
+
     const getAllPosts = async () => {
       try {
         const { data } = await axios.get('/posts', {
@@ -24,7 +27,10 @@ export const PostsPage = () => {
           },
           signal: conntroller.signal,
         })
-        isMounted && setAllPosts(data)
+        if (isMounted) {
+          setAllPosts(data)
+          setComments({})
+        }
       } catch (error: AxiosError | any) {
         console.log('error', error)
       }

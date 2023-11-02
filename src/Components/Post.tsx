@@ -33,10 +33,10 @@ import axios from '../Api/axios'
 export const Post = () => {
   const { id } = useParams<{ id: string }>()
   const [postData, setPostData] = useState<PostByIdResponse | null>(null)
+  const [showMoreClicked, setShowMoreClicked] = useState(false)
   const axiosPrivate = useAxiosPrivate()
   const { user } = useAuth()
-  const { comments, setChildComments, addComment, resetComments } =
-    useComments() // Destructure comments from context
+  const { comments, setChildComments, addComment, showLess } = useComments() // Destructure comments from context
   const [newComment, setNewComment] = useState('')
 
   useEffect(() => {
@@ -84,7 +84,6 @@ export const Post = () => {
     return () => {
       isMounted = false
       controller.abort()
-      resetComments()
     }
   }, [id]) // Only id in the dependency array// Keep only id in the dependency array to avoid infinite requests
 
@@ -128,7 +127,10 @@ export const Post = () => {
     try {
       const { data } = await axios.get<GetChildCommentsResponse>(url)
       const commentsData: PaginatedComments = data
-      if (data.status === 200) setChildComments(parentId, commentsData)
+      if (data.status === 200) {
+        setChildComments(parentId, commentsData)
+        setShowMoreClicked(true)
+      }
 
       console.log('Fetched With Show More', data)
     } catch (error) {
@@ -136,6 +138,10 @@ export const Post = () => {
     }
   }
 
+  const handleShowLess = (parentId: number | null) => {
+    showLess(String(parentId))
+    setShowMoreClicked(false)
+  }
   return (
     <Card variant='outlined' style={{ marginTop: 20, marginBottom: 20 }}>
       <Stack direction='row' justifyContent='space-between'>
@@ -191,9 +197,9 @@ export const Post = () => {
       <CardContent sx={{ m: 2 }}>
         <Typography variant='h6'>Comments</Typography>
         <List>
-          {comments['null']?.data.map((comment) => (
+          {comments['null']?.data.map((comment, index) => (
             <CommentComponent
-              key={`${comments['null'].pageNumber}_${comment.comment_id}`}
+              key={`${index}_${comment.comment_id}`}
               comment={comment}
               isLoggedIn={user ? true : false}
               postId={postData.data?.id}
@@ -209,20 +215,31 @@ export const Post = () => {
             />
           ))}
         </List>
-        {' Main Comments End Here'}
-        {comments['null'].totalCommentsCount != comments['null'].data.length ? (
-          <Button
-            onClick={() =>
-              handleShowMore(
-                null,
-                comments['null'].pageNumber + 1,
-                comments['null'].pageSize
-              )
-            }
-          >
-            Show More Comments{' '}
-          </Button>
-        ) : null}
+        <Stack spacing={2} direction='row' display='flex'>
+          {comments['null'].totalCommentsCount !=
+          comments['null'].data.length ? (
+            <Button
+              sx={{ alignSelf: 'flex-start' }}
+              onClick={() =>
+                handleShowMore(
+                  null,
+                  comments['null'].pageNumber + 1,
+                  comments['null'].pageSize
+                )
+              }
+            >
+              Show More Comments{' '}
+            </Button>
+          ) : null}
+          {showMoreClicked ? (
+            <Button
+              sx={{ alignSelf: 'flex-end' }}
+              onClick={() => handleShowLess(null)}
+            >
+              Show Less
+            </Button>
+          ) : null}
+        </Stack>
       </CardContent>
     </Card>
   )
