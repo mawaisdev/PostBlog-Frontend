@@ -35,13 +35,14 @@ interface CommentProps {
 }
 
 export const CommentComponent = ({
-  comment,
+  comment: c,
   postId,
   isLoggedIn,
   parentId,
   handleShowMore,
 }: CommentProps) => {
   const [isOpen, setIsOpen] = useState(false)
+  const [comment, setComment] = useState<CommentType>(c)
   const axiosPrivate = useAxiosPrivate()
   const [newComment, setNewComment] = useState('')
   const [pageNumber, setPageNumber] = useState(1)
@@ -138,6 +139,13 @@ export const CommentComponent = ({
 
       addComment(parentId, data.data) // Assuming data.comment is the new comment returned from the server
       setNewComment('')
+      setComment({
+        hasChild: true,
+        childCount: (Number(comment.childCount) + 1).toString(),
+        comment_id: comment.comment_id,
+        comment_text: comment.comment_text,
+        userId: comment.userId,
+      })
       setIsOpen(true)
     } catch (error) {
       console.error('Failed to add comment:', error)
