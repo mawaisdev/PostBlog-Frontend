@@ -97,6 +97,8 @@ export const CommentsProvider = ({
   }
 
   const addComment = (parentId: number | null, comment: Comment) => {
+    console.log('Adding Comments Called with Data: ', { comment }, { parentId })
+
     setComments((prevComments) => {
       const updatedComments = { ...prevComments }
       const key = parentId === null ? 'null' : String(parentId)
@@ -104,16 +106,21 @@ export const CommentsProvider = ({
 
       if (paginatedComments) {
         // Append the new comment to the existing data
+        if (paginatedComments.data.length === 0) {
+          paginatedComments.totalCommentsCount = 1
+        } else {
+          paginatedComments.totalCommentsCount += 1
+        }
         paginatedComments.data.unshift(comment)
-        if (paginatedComments.data.length > paginatedComments.pageSize)
+        if (paginatedComments.data.length > paginatedComments.pageSize) {
           paginatedComments.data.pop() // Remove the last comment from the array if the
-        paginatedComments.totalCommentsCount += 1 // Update the total comments count
-        paginatedComments.remainingCommentsCount += 1 // Update the remaining comments count
+          paginatedComments.remainingCommentsCount += 1 // Update the remaining comments count
+        }
       } else {
         // Create a new PaginatedComments object
         const newPaginatedComments: PaginatedComments = {
           data: [comment],
-          totalCommentsCount: 0,
+          totalCommentsCount: 1,
           remainingCommentsCount: 0,
           pageNumber: 1, // You might need to update this based on your logic
           pageSize: 5, // You might need to update this based on your logic

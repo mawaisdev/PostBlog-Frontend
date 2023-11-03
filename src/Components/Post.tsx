@@ -216,8 +216,8 @@ export const Post = () => {
           ))}
         </List>
         <Stack spacing={2} direction='row' display='flex'>
-          {comments['null'].totalCommentsCount !=
-          comments['null'].data.length ? (
+          {comments['null'].totalCommentsCount > 5 &&
+          comments['null'].data.length != 0 ? (
             <Button
               sx={{ alignSelf: 'flex-start' }}
               onClick={() =>

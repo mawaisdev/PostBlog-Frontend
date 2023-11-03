@@ -48,7 +48,7 @@ export const CommentComponent = ({
   const { comments, setChildComments, removeComment, addComment, showLess } =
     useComments()
   const { user } = useAuth()
-  const [showMoreClicked, setShowMoreClicked] = useState(false)
+  // const [showMoreClicked, setShowMoreClicked] = useState(false)
 
   const handleShow = async (
     parentId: number | null,
@@ -84,7 +84,7 @@ export const CommentComponent = ({
   }
   const handleShowLess = (parentId: number | null) => {
     showLess(String(parentId))
-    setShowMoreClicked(false)
+    // setShowMoreClicked(false)
   }
   const handleToggle = async () => {
     if (!isOpen && comment.hasChild) {
@@ -132,12 +132,13 @@ export const CommentComponent = ({
       const { data } = await axiosPrivate.post(`/comments`, {
         text: newComment,
         postId: Number(postId),
-        parentId,
+        parentId: parentId ? parentId : null,
         userId: Number(user?.id),
       })
 
       addComment(parentId, data.data) // Assuming data.comment is the new comment returned from the server
       setNewComment('')
+      setIsOpen(true)
     } catch (error) {
       console.error('Failed to add comment:', error)
     }
@@ -204,10 +205,12 @@ export const CommentComponent = ({
             </Button>
           )
         ) : null}
-        {showMoreClicked ? (
-          <Button onClick={() => handleShowLess(comment.comment_id)}>
-            Show Less
-          </Button>
+        {comments[comment.comment_id] ? (
+          comments[comment.comment_id].data.length > 5 ? (
+            <Button onClick={() => handleShowLess(comment.comment_id)}>
+              Show Less
+            </Button>
+          ) : null
         ) : null}
       </Collapse>
 
