@@ -100,10 +100,10 @@ export const Post = () => {
     return <NotFound404 />
   }
 
-  const handleAddComment = async (commentText: string) => {
+  const handleAddComment = async ({ reply }: CommentReply): Promise<void> => {
     try {
       const { data } = await axiosPrivate.post(`/comments`, {
-        text: commentText,
+        text: reply,
         postId: Number(id),
         parentId: null,
         userId: Number(user?.id),
@@ -112,6 +112,7 @@ export const Post = () => {
       console.log(data.data)
 
       addComment(null, data.data) // Assuming data.comment is the new comment returned from the server
+      reset()
     } catch (error) {
       console.error('Failed to add comment:', error)
     }
@@ -147,11 +148,6 @@ export const Post = () => {
     setShowMoreClicked(false)
   }
 
-  const onSubmit = async (data: { reply: string }): Promise<void> => {
-    console.log(data)
-    handleAddComment(data.reply)
-    reset()
-  }
   return (
     <Card variant='outlined' style={{ marginTop: 20, marginBottom: 20 }}>
       <Stack direction='row' justifyContent='space-between'>
@@ -172,7 +168,7 @@ export const Post = () => {
       </CardContent>
       <Divider />
       {user ? (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(handleAddComment)}>
           <Grid container alignItems='center' spacing={2} m={2}>
             <Grid item xs={12} sm={9} md={10}>
               <TextField

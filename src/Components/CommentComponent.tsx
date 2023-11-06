@@ -48,19 +48,7 @@ export const CommentComponent = ({
   const { comments, setChildComments, removeComment, addComment, showLess } =
     useComments()
   const { user } = useAuth()
-  // const [showMoreClicked, setShowMoreClicked] = useState(false)
 
-  const handleShow = async (
-    parentId: number | null,
-    pageNumber: number,
-    pageSize: number
-  ) => {
-    console.log(
-      `Child Comments Requesting More Comments With Page Number: ${pageNumber}, Page Size: ${pageSize} and ParentId: ${parentId}`
-    )
-
-    await handleShowMore(parentId, pageNumber, pageSize)
-  }
   const handleShowMore = async (
     parentId: number | null = null,
     pageNumber: number,
@@ -127,10 +115,13 @@ export const CommentComponent = ({
   const handleEdit = () => {
     console.log('edit', { comment }, { postId })
   }
-  const handleAddComment = async (parentId: number, repy: string) => {
+  const handleAddComment = async (
+    parentId: number,
+    { reply }: CommentReply
+  ) => {
     try {
       const { data } = await axiosPrivate.post(`/comments`, {
-        text: repy,
+        text: reply,
         postId: Number(postId),
         parentId: parentId ? parentId : null,
         userId: Number(user?.id),
@@ -147,9 +138,9 @@ export const CommentComponent = ({
       console.error('Failed to add comment:', error)
     }
   }
-  const onSubmit = async (data: { reply: string }): Promise<void> => {
-    console.log(data)
-    handleAddComment(comment.comment_id, data.reply)
+  const onSubmit = async ({ reply }: CommentReply): Promise<void> => {
+    console.log(reply)
+    handleAddComment(comment.comment_id, { reply })
     reset()
   }
   return (
@@ -202,7 +193,7 @@ export const CommentComponent = ({
           comments[singleComment.comment_id].data.length ? null : (
             <Button
               onClick={() =>
-                handleShow(
+                handleShowMore(
                   singleComment.comment_id,
                   comments[singleComment.comment_id].pageNumber + 1,
                   comments[singleComment.comment_id].pageSize
