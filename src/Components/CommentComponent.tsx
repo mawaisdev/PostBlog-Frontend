@@ -8,6 +8,8 @@ import {
   Button,
 } from '@mui/material'
 import { useState } from 'react'
+import { useForm, UseFormReturn } from 'react-hook-form'
+
 import {
   Comment as CommentType,
   GetChildCommentsResponse,
@@ -20,6 +22,7 @@ import { useAuth } from '../Hooks/useAuth'
 import { DeleteComment } from './DelteComment'
 import { Roles } from '../Types/Responses/User'
 import { useAxiosPrivate } from '../Hooks/useAxiosPrivate'
+import { CommentReply } from './Post'
 
 interface CommentProps {
   comment: CommentType
@@ -30,15 +33,17 @@ interface CommentProps {
 }
 
 export const CommentComponent = ({
-  comment: c,
+  comment,
   postId,
   isLoggedIn,
   parentId,
 }: CommentProps) => {
   const [isOpen, setIsOpen] = useState(false)
-  const [comment, setComment] = useState<CommentType>(c)
+  const { register, handleSubmit, reset }: UseFormReturn<CommentReply> =
+    useForm<CommentReply>()
   const axiosPrivate = useAxiosPrivate()
-  const [newComment, setNewComment] = useState('')
+  const [singleComment, setSingleComment] = useState<CommentType>(comment)
+
   const [pageNumber, setPageNumber] = useState(1)
   const { comments, setChildComments, removeComment, addComment, showLess } =
     useComments()
@@ -122,52 +127,54 @@ export const CommentComponent = ({
   const handleEdit = () => {
     console.log('edit', { comment }, { postId })
   }
-  const handleAddComment = async (parentId: number) => {
+  const handleAddComment = async (parentId: number, repy: string) => {
     try {
       const { data } = await axiosPrivate.post(`/comments`, {
-        text: newComment,
+        text: repy,
         postId: Number(postId),
         parentId: parentId ? parentId : null,
         userId: Number(user?.id),
       })
 
       addComment(parentId, data.data) // Assuming data.comment is the new comment returned from the server
-      setNewComment('')
-      setComment({
+      setSingleComment({
+        ...singleComment,
         hasChild: true,
-        childCount: (Number(comment.childCount) + 1).toString(),
-        comment_id: comment.comment_id,
-        comment_text: comment.comment_text,
-        userId: comment.userId,
+        childCount: singleComment.childCount + 1,
       })
       setIsOpen(true)
     } catch (error) {
       console.error('Failed to add comment:', error)
     }
   }
-
+  const onSubmit = async (data: { reply: string }): Promise<void> => {
+    console.log(data)
+    handleAddComment(comment.comment_id, data.reply)
+    reset()
+  }
   return (
     <>
-      <ListItem key={comment.comment_id}>
-        <Typography variant='body2'>{comment.comment_text}</Typography>
-        {comment.hasChild && (
+      <ListItem key={singleComment.comment_id}>
+        <Typography variant='body2'>{singleComment.comment_text}</Typography>
+        {singleComment.hasChild && (
           <IconButton size='small' onClick={handleToggle}>
             {isOpen ? <ArrowDropUp /> : <ArrowDropDown />}
           </IconButton>
         )}
         {isLoggedIn &&
           user &&
-          (user.id === comment.userId || user.roles.includes(Roles.Admin)) && (
+          (user.id === singleComment.userId ||
+            user.roles.includes(Roles.Admin)) && (
             <>
-              {user.id === comment.userId && (
+              {user.id === singleComment.userId && (
                 <IconButton size='small' onClick={handleEdit}>
                   <Edit />
                 </IconButton>
               )}
               <DeleteComment
-                commentId={comment.comment_id}
+                commentId={singleComment.comment_id}
                 onDeleteSuccess={() =>
-                  removeComment(parentId!, comment.comment_id)
+                  removeComment(parentId, singleComment.comment_id)
                 }
               />
             </>
@@ -175,7 +182,7 @@ export const CommentComponent = ({
       </ListItem>
 
       <Collapse in={isOpen} timeout='auto' unmountOnExit>
-        {comments[comment.comment_id]?.data?.map((childComment) => (
+        {comments[singleComment.comment_id]?.data?.map((childComment) => (
           <div
             key={`${comment.comment_id}_${childComment.comment_id}`}
             style={{ marginLeft: '20px' }}
@@ -183,22 +190,22 @@ export const CommentComponent = ({
             <CommentComponent
               comment={childComment}
               postId={postId}
-              parentId={comment.comment_id}
+              parentId={singleComment.comment_id}
               isLoggedIn={isLoggedIn}
-              createdBy={comment.userId}
+              createdBy={singleComment.userId}
               key={childComment.comment_id} // Add this key prop
             />
           </div>
         ))}
-        {comments[comment.comment_id] ? (
-          comments[comment.comment_id].totalCommentsCount ===
-          comments[comment.comment_id].data.length ? null : (
+        {comments[singleComment.comment_id] ? (
+          comments[singleComment.comment_id].totalCommentsCount ===
+          comments[singleComment.comment_id].data.length ? null : (
             <Button
               onClick={() =>
                 handleShow(
-                  comment.comment_id,
-                  comments[comment.comment_id].pageNumber + 1,
-                  comments[comment.comment_id].pageSize
+                  singleComment.comment_id,
+                  comments[singleComment.comment_id].pageNumber + 1,
+                  comments[singleComment.comment_id].pageSize
                 )
               }
             >
@@ -206,9 +213,9 @@ export const CommentComponent = ({
             </Button>
           )
         ) : null}
-        {comments[comment.comment_id] ? (
-          comments[comment.comment_id].data.length > 5 ? (
-            <Button onClick={() => handleShowLess(comment.comment_id)}>
+        {comments[singleComment.comment_id] ? (
+          comments[singleComment.comment_id].data.length > 5 ? (
+            <Button onClick={() => handleShowLess(singleComment.comment_id)}>
               Show Less
             </Button>
           ) : null
@@ -216,35 +223,27 @@ export const CommentComponent = ({
       </Collapse>
 
       {isLoggedIn && (
-        <Grid
-          container
-          spacing={2}
-          style={{ marginTop: '10px', marginBottom: '10px' }}
-        >
-          <Grid
-            container
-            style={{ marginTop: '10px', marginBottom: '10px' }}
-            ml={8}
-          >
-            <Grid item xs={9} md={10}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Grid container alignItems='center' spacing={2} m={2}>
+            <Grid item xs={12} sm={9} md={10}>
               <TextField
-                label='Reply to this comment'
+                label='Add Comment'
                 variant='outlined'
+                margin='normal'
                 fullWidth
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
+                id='reply'
+                {...register('reply')}
+                autoComplete='off'
               />
             </Grid>
-            <Grid item xs={3} md={2}>
-              <IconButton
-                color='primary'
-                onClick={() => handleAddComment(comment.comment_id)}
-              >
+
+            <Grid item xs={12} sm={3} md={2}>
+              <IconButton color='primary' type='submit'>
                 <Send />
               </IconButton>
             </Grid>
           </Grid>
-        </Grid>
+        </form>
       )}
       {!isLoggedIn && (
         <Typography
