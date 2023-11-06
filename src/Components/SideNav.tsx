@@ -17,6 +17,7 @@ import { Drawer } from '../StyledComponents/Drawer'
 import { useAuth } from '../Hooks/useAuth'
 import {
   AccountCircleOutlined,
+  Add,
   CategoryOutlined,
   ChevronLeft,
   ChevronRight,
@@ -125,6 +126,12 @@ export const SideNav = ({ children }: SideNavProps) => {
 
             {token ? (
               <>
+                <NavListItem
+                  open={open}
+                  icon={<Add />}
+                  heading={MenuItems.CreatePost}
+                  handleClick={() => navigate(Routes.CreatePost)}
+                />
                 {token && user?.roles === Roles.Admin ? (
                   <>
                     <Divider />

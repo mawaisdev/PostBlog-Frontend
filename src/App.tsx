@@ -18,6 +18,7 @@ import { CategoryProvider } from './Contexts/CategoryContext'
 import { Post } from './Components/Post'
 import { Routes as RoutesEnum } from './Types/Enums'
 import { CommentsProvider } from './Contexts/CommentsContext'
+import { CreatePost } from './Components/CreatePost'
 
 const App = () => {
   return (
@@ -68,6 +69,10 @@ const App = () => {
                       <Route
                         path={RoutesEnum.Dashboard}
                         element={<DashboardPage />}
+                      />
+                      <Route
+                        path={RoutesEnum.CreatePost}
+                        element={<CreatePost />}
                       />
                       <Route
                         path={RoutesEnum.Profile}
