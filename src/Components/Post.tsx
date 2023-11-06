@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { useForm, UseFormReturn } from 'react-hook-form'
 import { AxiosError } from 'axios'
 import {
   Card,
@@ -29,15 +30,19 @@ import { Send } from '@mui/icons-material'
 import { useComments } from '../Contexts/CommentsContext'
 import { useAxiosPrivate } from '../Hooks/useAxiosPrivate'
 import axios from '../Api/axios'
+export type CommentReply = {
+  reply: string
+}
 
 export const Post = () => {
+  const { register, handleSubmit, reset }: UseFormReturn<CommentReply> =
+    useForm<CommentReply>()
   const { id } = useParams<{ id: string }>()
   const [postData, setPostData] = useState<PostByIdResponse | null>(null)
   const [showMoreClicked, setShowMoreClicked] = useState(false)
   const axiosPrivate = useAxiosPrivate()
   const { user } = useAuth()
   const { comments, setChildComments, addComment, showLess } = useComments() // Destructure comments from context
-  const [newComment, setNewComment] = useState('')
 
   useEffect(() => {
     let isMounted = true
@@ -95,10 +100,10 @@ export const Post = () => {
     return <NotFound404 />
   }
 
-  const handleAddComment = async () => {
+  const handleAddComment = async (commentText: string) => {
     try {
       const { data } = await axiosPrivate.post(`/comments`, {
-        text: newComment,
+        text: commentText,
         postId: Number(id),
         parentId: null,
         userId: Number(user?.id),
@@ -107,7 +112,6 @@ export const Post = () => {
       console.log(data.data)
 
       addComment(null, data.data) // Assuming data.comment is the new comment returned from the server
-      setNewComment('')
     } catch (error) {
       console.error('Failed to add comment:', error)
     }
@@ -142,6 +146,12 @@ export const Post = () => {
     showLess(String(parentId))
     setShowMoreClicked(false)
   }
+
+  const onSubmit = async (data: { reply: string }): Promise<void> => {
+    console.log(data)
+    handleAddComment(data.reply)
+    reset()
+  }
   return (
     <Card variant='outlined' style={{ marginTop: 20, marginBottom: 20 }}>
       <Stack direction='row' justifyContent='space-between'>
@@ -162,27 +172,27 @@ export const Post = () => {
       </CardContent>
       <Divider />
       {user ? (
-        <Grid
-          container
-          spacing={2}
-          m={2}
-          // style={{ marginTop: '20px', marginBottom: '20px' }}
-        >
-          <Grid item xs={9} md={10}>
-            <TextField
-              label='Add a comment'
-              variant='outlined'
-              fullWidth
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-            />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Grid container alignItems='center' spacing={2} m={2}>
+            <Grid item xs={12} sm={9} md={10}>
+              <TextField
+                label='Add Comment'
+                variant='outlined'
+                margin='normal'
+                fullWidth
+                id='reply'
+                {...register('reply')}
+                autoComplete='off'
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={3} md={2}>
+              <IconButton color='primary' type='submit'>
+                <Send />
+              </IconButton>
+            </Grid>
           </Grid>
-          <Grid item xs={3} md={2}>
-            <IconButton color='primary' onClick={handleAddComment}>
-              <Send />
-            </IconButton>
-          </Grid>
-        </Grid>
+        </form>
       ) : (
         <Typography
           m={2}
@@ -205,13 +215,6 @@ export const Post = () => {
               postId={postData.data?.id}
               createdBy={comment.userId}
               parentId={null}
-              handleShowMore={() =>
-                handleShowMore(
-                  comment.comment_id,
-                  postData.pageNumber!,
-                  postData.pageSize!
-                )
-              }
             />
           ))}
         </List>

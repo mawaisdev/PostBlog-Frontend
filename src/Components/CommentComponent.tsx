@@ -27,11 +27,6 @@ interface CommentProps {
   parentId: number | null
   isLoggedIn: boolean
   createdBy: number
-  handleShowMore: (
-    parentId: number | null,
-    pageNumber: number,
-    perPage: number
-  ) => void
 }
 
 export const CommentComponent = ({
@@ -39,7 +34,6 @@ export const CommentComponent = ({
   postId,
   isLoggedIn,
   parentId,
-  handleShowMore,
 }: CommentProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const [comment, setComment] = useState<CommentType>(c)
@@ -59,29 +53,29 @@ export const CommentComponent = ({
     console.log(
       `Child Comments Requesting More Comments With Page Number: ${pageNumber}, Page Size: ${pageSize} and ParentId: ${parentId}`
     )
-    const handleShowMore = async (
-      parentId: number | null = null,
-      pageNumber: number,
-      perPage: number
-    ) => {
-      const url = parentId
-        ? `/allcomments/${postId}/comments?parentId=${parentId}&page=${pageNumber}&perPage=${5}`
-        : `/allcomments/${postId}/comments?page=${pageNumber}&perPage=${perPage}`
-      console.log(
-        `Handle Show More With Parent Id: ${parentId} & PageNumber: ${pageNumber} & PerPage: ${5}`
-      )
-      try {
-        const { data } = await axios.get<GetChildCommentsResponse>(url)
-        const commentsData: PaginatedComments = data
-        if (data.status === 200) setChildComments(parentId, commentsData)
-
-        console.log('Fetched With Show More', data)
-      } catch (error) {
-        console.error('Error fetching child comments:', error)
-      }
-    }
 
     await handleShowMore(parentId, pageNumber, pageSize)
+  }
+  const handleShowMore = async (
+    parentId: number | null = null,
+    pageNumber: number,
+    perPage: number
+  ) => {
+    const url = parentId
+      ? `/allcomments/${postId}/comments?parentId=${parentId}&page=${pageNumber}&perPage=${5}`
+      : `/allcomments/${postId}/comments?page=${pageNumber}&perPage=${perPage}`
+    console.log(
+      `Handle Show More With Parent Id: ${parentId} & PageNumber: ${pageNumber} & PerPage: ${5}`
+    )
+    try {
+      const { data } = await axios.get<GetChildCommentsResponse>(url)
+      const commentsData: PaginatedComments = data
+      if (data.status === 200) setChildComments(parentId, commentsData)
+
+      console.log('Fetched With Show More', data)
+    } catch (error) {
+      console.error('Error fetching child comments:', error)
+    }
   }
   const handleShowLess = (parentId: number | null) => {
     showLess(String(parentId))
@@ -193,7 +187,6 @@ export const CommentComponent = ({
               isLoggedIn={isLoggedIn}
               createdBy={comment.userId}
               key={childComment.comment_id} // Add this key prop
-              handleShowMore={handleShowMore}
             />
           </div>
         ))}
