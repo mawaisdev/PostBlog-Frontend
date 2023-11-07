@@ -19,6 +19,7 @@ import { Post } from './Components/Post'
 import { Routes as RoutesEnum } from './Types/Enums'
 import { CommentsProvider } from './Contexts/CommentsContext'
 import { CreatePost } from './Components/CreatePost'
+import { UpdatePost } from './Components/UpdatePost'
 
 const App = () => {
   return (
@@ -73,6 +74,10 @@ const App = () => {
                       <Route
                         path={RoutesEnum.CreatePost}
                         element={<CreatePost />}
+                      />
+                      <Route
+                        path={RoutesEnum.UpdatePost}
+                        element={<UpdatePost />}
                       />
                       <Route
                         path={RoutesEnum.Profile}

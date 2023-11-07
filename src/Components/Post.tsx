@@ -29,6 +29,7 @@ import { useAuth } from '../Hooks/useAuth'
 import { NotFound404 } from '../Pages/NotFound404Page'
 import { ResponsiveCircularProgress } from './ResponsiveCircularProgress'
 import { Send } from '@mui/icons-material'
+import { useNavigate } from 'react-router-dom'
 import { useComments } from '../Contexts/CommentsContext'
 import { useAxiosPrivate } from '../Hooks/useAxiosPrivate'
 import axios from '../Api/axios'
@@ -42,6 +43,7 @@ export const Post = () => {
   const { id } = useParams<{ id: string }>()
   const [postData, setPostData] = useState<PostByIdResponse | null>(null)
   const [showMoreClicked, setShowMoreClicked] = useState(false)
+  const navigate = useNavigate()
   const axiosPrivate = useAxiosPrivate()
   const { user } = useAuth()
   const { comments, setChildComments, addComment, showLess } = useComments() // Destructure comments from context
@@ -168,12 +170,22 @@ export const Post = () => {
       </Stack>
       {postData.data?.user.id === user?.id && (
         <Box display={'flex'} justifyContent={'center'}>
-          <Button variant='outlined' sx={{ mt: 2, mb: 2 }}>
+          <Button
+            variant='outlined'
+            sx={{ mt: 2, mb: 2 }}
+            onClick={() => navigate(`/posts/update/${id}`)}
+          >
             Edit
           </Button>
         </Box>
       )}
-      <CardMedia component='img' height={340} image={postData.data?.imageUrl} />
+      {postData.data?.imageUrl && (
+        <CardMedia
+          component='img'
+          height={340}
+          image={postData.data?.imageUrl}
+        />
+      )}
       <CardContent>
         <Typography variant='body1'>{postData.data?.body}</Typography>
       </CardContent>
