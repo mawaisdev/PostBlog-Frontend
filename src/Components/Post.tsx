@@ -15,6 +15,8 @@ import {
   Grid,
   IconButton,
   Button,
+  CardMedia,
+  Box,
 } from '@mui/material'
 import {
   GetChildCommentsResponse,
@@ -157,12 +159,21 @@ export const Post = () => {
             postData.data && formatDate(postData.data?.createdAt)
           }`}
         />
+
         <Chip
           label={postData.data?.category.name}
           variant='outlined'
           style={{ margin: 15 }}
         />
       </Stack>
+      {postData.data?.user.id === user?.id && (
+        <Box display={'flex'} justifyContent={'center'}>
+          <Button variant='outlined' sx={{ mt: 2, mb: 2 }}>
+            Edit
+          </Button>
+        </Box>
+      )}
+      <CardMedia component='img' height={340} image={postData.data?.imageUrl} />
       <CardContent>
         <Typography variant='body1'>{postData.data?.body}</Typography>
       </CardContent>

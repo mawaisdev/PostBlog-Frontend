@@ -1,36 +1,36 @@
-import { useState } from 'react'
-import { Button, Input } from '@mui/material'
+import { Box, Input, Stack } from '@mui/material'
 
-const ImageUpload = () => {
-  const [selectedImage, setSelectedImage] = useState<any>(null)
+export type ImageUploadProps = {
+  file: File | null
+  setFile: React.Dispatch<React.SetStateAction<File | null>>
+}
 
-  const handleImageChange = (e: any) => {
-    console.log(typeof e)
-    const file = e.target.files[0]
-    setSelectedImage(file)
+export const ImageUpload = ({ setFile, file }: ImageUploadProps) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFile(e.target.files && e.target.files[0])
+    const selectedFile = e.target.files && e.target.files[0]
+    if (selectedFile) {
+      // Handle the selected file here
+      console.log('Selected File Name:', selectedFile.name)
+      console.log('Selected File Type:', selectedFile.type)
+
+      // Perform any other necessary actions or validations
+    }
   }
 
   return (
-    <div>
-      <Input
-        id='image-upload'
-        type='file'
-        onChange={handleImageChange}
-        style={{ display: 'none' }}
-      />
-      <label htmlFor='image-upload'>
-        <Button variant='contained' component='span'>
-          Select Image
-        </Button>
-      </label>
-      {selectedImage && (
-        <div>
-          <p>Selected Image: {selectedImage.name}</p>
-          <Button onClick={() => setSelectedImage(null)}>Clear</Button>
-        </div>
+    <Stack
+      direction={'column'}
+      display={'flex'}
+      justifyContent={'space-between'}
+      spacing={3}
+    >
+      <Input type='file' id='image-upload' onChange={handleImageChange} />
+      {file && file.type.startsWith('image') && (
+        <Box sx={{ width: 'full', height: '50%' }}>
+          <img src={URL.createObjectURL(file)} alt='Post Cover' />
+        </Box>
       )}
-    </div>
+    </Stack>
   )
 }
-
-export default ImageUpload

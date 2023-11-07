@@ -16,6 +16,7 @@ export interface Post {
   isPrivate: boolean
   createdAt: string
   updatedAt: string
+  imageUrl: string
   user: User
   category: Category
   comments: Comment[]
