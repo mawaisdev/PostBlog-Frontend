@@ -152,6 +152,10 @@ export const Post = () => {
     setShowMoreClicked(false)
   }
 
+  const handleUpdateClick = () => {
+    const post = postData.data
+    navigate(`/posts/update/${id}`, { state: { post } })
+  }
   return (
     <Card variant='outlined' style={{ marginTop: 20, marginBottom: 20 }}>
       <Stack direction='row' justifyContent='space-between'>
@@ -173,7 +177,7 @@ export const Post = () => {
           <Button
             variant='outlined'
             sx={{ mt: 2, mb: 2 }}
-            onClick={() => navigate(`/posts/update/${id}`)}
+            onClick={handleUpdateClick}
           >
             Edit
           </Button>
