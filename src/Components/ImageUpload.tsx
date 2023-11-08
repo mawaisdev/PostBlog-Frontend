@@ -3,6 +3,7 @@ import { Box, Input, Stack } from '@mui/material'
 export type ImageUploadProps = {
   file: File | null
   setFile: React.Dispatch<React.SetStateAction<File | null>>
+  imageUrl?: string
 }
 
 export const ImageUpload = ({ setFile, file }: ImageUploadProps) => {
@@ -27,7 +28,15 @@ export const ImageUpload = ({ setFile, file }: ImageUploadProps) => {
     >
       <Input type='file' id='image-upload' onChange={handleImageChange} />
       {file && file.type.startsWith('image') && (
-        <Box sx={{ width: 'full', height: '50%' }}>
+        <Box
+          sx={{
+            width: 'full',
+            height: '50%',
+            mt: '2rem',
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
           <img src={URL.createObjectURL(file)} alt='Post Cover' />
         </Box>
       )}

@@ -17,33 +17,10 @@ import { ImageUpload } from './ImageUpload'
 import { ResponsiveCircularProgress } from './ResponsiveCircularProgress'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-
-export type CreatePostType = {
-  title: string
-  body: string
-  imageUrl: string
-  isDraft: boolean
-  isPrivate: boolean
-  categoryId: number
-}
-
-export type CreatePostResponse = {
-  status: number
-  response: string
-  data: {
-    body: string
-    createdAt: string
-    imageUrl: string
-    isDraft: boolean
-    title: string
-    isPrivate: boolean
-    userId: number
-    categoryId: number
-    updatedBy: number
-    id: number
-    updatedAt: string
-  }
-}
+import {
+  CreatePostResponse,
+  CreatePostType,
+} from '../Types/Responses/Post/PostByIdResponse'
 
 export const CreatePost = () => {
   const [selectedCategory, setSelectedCategory] = useState(0)
