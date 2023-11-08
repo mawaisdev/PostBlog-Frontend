@@ -56,7 +56,6 @@ export const CommentsProvider = ({
 
       return { ...prevComments }
     })
-    console.log('State of comments', { comments })
   }
 
   const removeComment = (parentId: number | null, commentId: number) => {
@@ -97,8 +96,6 @@ export const CommentsProvider = ({
   }
 
   const addComment = (parentId: number | null, comment: Comment) => {
-    console.log('Adding Comments Called with Data: ', { comment }, { parentId })
-
     setComments((prevComments) => {
       const updatedComments = { ...prevComments }
       const key = parentId === null ? 'null' : String(parentId)
@@ -129,7 +126,6 @@ export const CommentsProvider = ({
         updatedComments[key] = newPaginatedComments
       }
 
-      console.log('Updated Comments', { updatedComments })
       return updatedComments
     })
   }

@@ -46,7 +46,6 @@ export const CreatePost = () => {
         dataWithImage
       )
       if (data.status === 201) {
-        console.log(data.data)
         setIsCreating(false)
         navigate(`/posts/${data.data.id}`)
         reset()
@@ -88,7 +87,6 @@ export const CreatePost = () => {
         )
 
         if (isMounted && data.status === 200) {
-          console.log('Fetched Categories: ', data.data)
           setCategories(data.data)
           setIsCreating(false)
         }

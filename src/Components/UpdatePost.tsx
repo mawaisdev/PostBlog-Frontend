@@ -65,7 +65,6 @@ export const UpdatePost = () => {
         dataWithImage
       )
       if (data.status === 200) {
-        console.log(data.data)
         setIsCreating(false)
         navigate(`/posts/${id}`)
         reset()
@@ -107,7 +106,6 @@ export const UpdatePost = () => {
         )
 
         if (isMounted && data.status === 200) {
-          console.log('Fetched Categories: ', data.data)
           setCategories(data.data)
           const selectedCategoryFromDb = data.data.find(
             (c) => c.id == post.category.id

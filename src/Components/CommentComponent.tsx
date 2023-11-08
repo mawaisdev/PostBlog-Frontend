@@ -57,15 +57,11 @@ export const CommentComponent = ({
     const url = parentId
       ? `/allcomments/${postId}/comments?parentId=${parentId}&page=${pageNumber}&perPage=${5}`
       : `/allcomments/${postId}/comments?page=${pageNumber}&perPage=${perPage}`
-    console.log(
-      `Handle Show More With Parent Id: ${parentId} & PageNumber: ${pageNumber} & PerPage: ${5}`
-    )
+
     try {
       const { data } = await axios.get<GetChildCommentsResponse>(url)
       const commentsData: PaginatedComments = data
       if (data.status === 200) setChildComments(parentId, commentsData)
-
-      console.log('Fetched With Show More', data)
     } catch (error) {
       console.error('Error fetching child comments:', error)
     }
@@ -104,7 +100,6 @@ export const CommentComponent = ({
           setPageNumber(pageNumber + 1) // Increment the page number
           setIsOpen(!isOpen)
         }
-        console.log('child comments', data)
       } catch (error) {
         console.error('Error fetching child comments:', error)
       }
@@ -139,7 +134,6 @@ export const CommentComponent = ({
     }
   }
   const onSubmit = async ({ reply }: CommentReply): Promise<void> => {
-    console.log(reply)
     handleAddComment(comment.comment_id, { reply })
     reset()
   }

@@ -9,14 +9,6 @@ export type ImageUploadProps = {
 export const ImageUpload = ({ setFile, file }: ImageUploadProps) => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFile(e.target.files && e.target.files[0])
-    const selectedFile = e.target.files && e.target.files[0]
-    if (selectedFile) {
-      // Handle the selected file here
-      console.log('Selected File Name:', selectedFile.name)
-      console.log('Selected File Type:', selectedFile.type)
-
-      // Perform any other necessary actions or validations
-    }
   }
 
   return (

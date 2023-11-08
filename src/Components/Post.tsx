@@ -62,7 +62,6 @@ export const Post = () => {
         )
         if (isMounted) {
           setPostData(data)
-          console.log(data)
           const commentsData: PaginatedComments = {
             data: data.data?.comments || [],
             pageNumber: data.pageNumber ? data.pageNumber : 1,
@@ -112,9 +111,6 @@ export const Post = () => {
         parentId: null,
         userId: Number(user?.id),
       })
-
-      console.log(data.data)
-
       addComment(null, data.data) // Assuming data.comment is the new comment returned from the server
       reset()
     } catch (error) {
@@ -130,9 +126,6 @@ export const Post = () => {
     const url = parentId
       ? `/allcomments/${id}/comments?parentId=${parentId}&page=${pageNumber}&perPage=${5}`
       : `/allcomments/${id}/comments?page=${pageNumber}&perPage=${perPage}`
-    console.log(
-      `Handle Show More With Parent Id: ${parentId} & PageNumber: ${pageNumber} & PerPage: ${5}`
-    )
     try {
       const { data } = await axios.get<GetChildCommentsResponse>(url)
       const commentsData: PaginatedComments = data
@@ -140,8 +133,6 @@ export const Post = () => {
         setChildComments(parentId, commentsData)
         setShowMoreClicked(true)
       }
-
-      console.log('Fetched With Show More', data)
     } catch (error) {
       console.error('Error fetching child comments:', error)
     }
