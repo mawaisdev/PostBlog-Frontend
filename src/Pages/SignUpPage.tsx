@@ -9,7 +9,7 @@ import { useAuth } from '../Hooks/useAuth'
 import { Link, useNavigate } from 'react-router-dom'
 import { AxiosError } from 'axios'
 
-export const SignUpPage = () => {
+const SignUpPage = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [message, setMessage] = useState<string>('')
   const { setAuthState } = useAuth() // Get the setAuthState from your context
@@ -180,3 +180,5 @@ export const SignUpPage = () => {
     </Box>
   )
 }
+
+export default SignUpPage

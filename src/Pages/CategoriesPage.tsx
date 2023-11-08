@@ -1,8 +1,7 @@
 import { Grid, Paper } from '@mui/material'
 import { CreateCategory } from '../Components/Categories/CreateCategory'
 import { CategoriesTable } from '../Components/Categories/CategoriesTable'
-
-export const CategoriesPage = () => {
+const CategoriesPage = () => {
   return (
     <Grid container spacing={2} sx={{ minWidth: '440px' }}>
       {/* First Row */}
@@ -50,3 +49,5 @@ export const CategoriesPage = () => {
     </Grid>
   )
 }
+
+export default CategoriesPage

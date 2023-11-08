@@ -5,8 +5,7 @@ import { GetAllPostsResponse } from '../Types/Responses/Post/GetAllPostsResponse
 import { PostCard } from '../Components/PostCard'
 import { AxiosError } from 'axios'
 import { useComments } from '../Contexts/CommentsContext'
-
-export const PostsPage = () => {
+const PostsPage = () => {
   const [allPosts, setAllPosts] = useState<GetAllPostsResponse>()
   const [page, setPage] = useState(1)
   const pageSize = 10
@@ -62,3 +61,5 @@ export const PostsPage = () => {
     </>
   )
 }
+
+export default PostsPage

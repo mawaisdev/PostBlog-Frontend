@@ -9,7 +9,7 @@ import {
 } from '../Types/Responses/Profile/ProfilePageResponse'
 import { AxiosError } from 'axios'
 
-export const ProfilePage = () => {
+const ProfilePage = () => {
   const axiosPrivate = useAxiosPrivate()
   const [user, setUser] = useState<ProfileUser>({} as ProfileUser)
 
@@ -35,3 +35,5 @@ export const ProfilePage = () => {
     </Box>
   )
 }
+
+export default ProfilePage
