@@ -17,6 +17,11 @@ import {
   Button,
   CardMedia,
   Box,
+  DialogTitle,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
 } from '@mui/material'
 import {
   GetChildCommentsResponse,
@@ -47,6 +52,31 @@ export const Post = () => {
   const axiosPrivate = useAxiosPrivate()
   const { user } = useAuth()
   const { comments, setChildComments, addComment, showLess } = useComments() // Destructure comments from context
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const handleDeleteClick = () => {
+    setIsDeleteDialogOpen(true)
+  }
+  const handleConfirmDelete = async () => {
+    // Make axios call to delete the post
+    try {
+      // ... your axios delete call
+      console.log('Delete Clicked', id)
+      const { data } = await axiosPrivate.delete(`/posts/${id}`)
+      if (data.status === 200) {
+        navigate('/posts')
+      }
+      // Close the dialog
+      setIsDeleteDialogOpen(false)
+    } catch (error) {
+      console.error('Failed to delete post:', error)
+      // Handle error
+    }
+  }
+
+  const handleCancelDelete = () => {
+    // Close the dialog without performing the delete action
+    setIsDeleteDialogOpen(false)
+  }
 
   useEffect(() => {
     let isMounted = true
@@ -147,6 +177,7 @@ export const Post = () => {
     const post = postData.data
     navigate(`/posts/update/${id}`, { state: { post } })
   }
+
   return (
     <Card variant='outlined' style={{ marginTop: 20, marginBottom: 20 }}>
       <Stack direction='row' justifyContent='space-between'>
@@ -164,15 +195,32 @@ export const Post = () => {
         />
       </Stack>
       {postData.data?.user.id === user?.id && (
-        <Box display={'flex'} justifyContent={'center'}>
-          <Button
-            variant='outlined'
-            sx={{ mt: 2, mb: 2 }}
-            onClick={handleUpdateClick}
-          >
-            Edit
-          </Button>
-        </Box>
+        <Stack
+          direction='row'
+          display='flex'
+          justifyContent='center'
+          spacing={4}
+        >
+          <Box display={'flex'} justifyContent={'center'}>
+            <Button
+              variant='outlined'
+              sx={{ mt: 2, mb: 2 }}
+              onClick={handleUpdateClick}
+            >
+              Edit
+            </Button>
+          </Box>
+          <Box display={'flex'} justifyContent={'center'}>
+            <Button
+              variant='outlined'
+              color='error'
+              sx={{ mt: 2, mb: 2 }}
+              onClick={handleDeleteClick}
+            >
+              Delete
+            </Button>
+          </Box>
+        </Stack>
       )}
       {postData.data?.imageUrl && (
         <CardMedia
@@ -260,6 +308,26 @@ export const Post = () => {
           ) : null}
         </Stack>
       </CardContent>
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={isDeleteDialogOpen}
+        onClose={handleCancelDelete}
+        aria-labelledby='alert-dialog-title'
+        aria-describedby='alert-dialog-description'
+      >
+        <DialogTitle id='alert-dialog-title'>{'Delete Post?'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id='alert-dialog-description'>
+            Are you sure you want to delete this post?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete}>Cancel</Button>
+          <Button onClick={handleConfirmDelete} color='error' autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Card>
   )
 }
