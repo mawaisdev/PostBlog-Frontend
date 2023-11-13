@@ -1,7 +1,6 @@
 // DeleteComment.tsx
 import { useState } from 'react'
 import {
-  IconButton,
   Dialog,
   DialogActions,
   DialogContent,
@@ -46,9 +45,9 @@ const DeleteComment: React.FC<DeleteCommentProps> = ({
 
   return (
     <>
-      <IconButton size='small' onClick={openDeleteDialog}>
-        <Delete />
-      </IconButton>
+      <Button size='small' onClick={openDeleteDialog} variant='outlined'>
+        <Delete /> Delete
+      </Button>
 
       <Dialog open={openDialog} onClose={closeDeleteDialog}>
         <DialogTitle>Confirm Deletion</DialogTitle>

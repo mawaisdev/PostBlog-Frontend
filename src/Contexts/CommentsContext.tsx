@@ -16,6 +16,11 @@ interface CommentsContextType {
   addComment: (parentId: number | null, comment: Comment) => void
   setComments: React.Dispatch<React.SetStateAction<CommentsState>>
   showLess: (parentId: string) => void
+  editComment: (
+    parentId: number | null,
+    commentId: number,
+    newText: string
+  ) => void
 }
 
 export const CommentsContext = createContext<CommentsContextType | undefined>(
@@ -153,6 +158,46 @@ export const CommentsProvider = ({
       return updatedCommentsState
     })
   }
+  const editComment = (
+    parentId: number | null,
+    commentId: number,
+    newText: string
+  ) => {
+    setComments((prevComments) => {
+      const updatedCommentsState = { ...prevComments }
+
+      if (parentId !== null) {
+        // Handle editing of the child comment
+        const paginatedComments = updatedCommentsState[String(parentId)]
+        if (paginatedComments) {
+          const updatedData = paginatedComments.data.map((comment) =>
+            comment.comment_id === commentId
+              ? { ...comment, comment_text: newText }
+              : comment
+          )
+
+          paginatedComments.data = updatedData
+
+          return updatedCommentsState
+        }
+      } else {
+        // Handle editing of the main comment
+        if (updatedCommentsState['null']) {
+          const updatedData = updatedCommentsState['null'].data.map((comment) =>
+            comment.comment_id === commentId
+              ? { ...comment, comment_text: newText }
+              : comment
+          )
+
+          updatedCommentsState['null'].data = updatedData
+
+          return updatedCommentsState
+        }
+      }
+
+      return updatedCommentsState
+    })
+  }
 
   return (
     <CommentsContext.Provider
@@ -161,6 +206,7 @@ export const CommentsProvider = ({
         setChildComments,
         removeComment,
         addComment,
+        editComment,
         setComments,
         showLess,
       }}

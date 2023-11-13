@@ -4,8 +4,9 @@ import {
   IconButton,
   Collapse,
   TextField,
-  Grid,
   Button,
+  Stack,
+  Box,
 } from '@mui/material'
 import { useState } from 'react'
 import { useForm, UseFormReturn } from 'react-hook-form'
@@ -16,13 +17,14 @@ import {
   PaginatedComments,
 } from '../Types/Responses/Post/PostByIdResponse'
 import { useComments } from '../Contexts/CommentsContext'
-import { ArrowDropDown, ArrowDropUp, Edit, Send } from '@mui/icons-material'
+import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
 import axios from '../Api/axios'
 import { useAuth } from '../Hooks/useAuth'
-import { DeleteComment } from './Delete'
+import { DeleteComment } from './DeleteComment'
 import { Roles } from '../Types/Responses/User'
 import { useAxiosPrivate } from '../Hooks/useAxiosPrivate'
 import { CommentReply } from './Post'
+import { EditComment } from './EditComment'
 
 interface CommentProps {
   comment: CommentType
@@ -42,12 +44,20 @@ export const CommentComponent = ({
   const { register, handleSubmit, reset }: UseFormReturn<CommentReply> =
     useForm<CommentReply>()
   const axiosPrivate = useAxiosPrivate()
+  const [replyMode, setReplyMode] = useState(false)
   const [singleComment, setSingleComment] = useState<CommentType>(comment)
 
   const [pageNumber, setPageNumber] = useState(1)
-  const { comments, setChildComments, removeComment, addComment, showLess } =
-    useComments()
+  const {
+    comments,
+    setChildComments,
+    removeComment,
+    addComment,
+    showLess,
+    editComment,
+  } = useComments()
   const { user } = useAuth()
+  const [text, setText] = useState('')
 
   const handleShowMore = async (
     parentId: number | null = null,
@@ -107,9 +117,6 @@ export const CommentComponent = ({
     setIsOpen(!isOpen)
   }
 
-  const handleEdit = () => {
-    console.log('edit', { comment }, { postId })
-  }
   const handleAddComment = async (
     parentId: number,
     { reply }: CommentReply
@@ -129,32 +136,54 @@ export const CommentComponent = ({
         childCount: singleComment.childCount + 1,
       })
       setIsOpen(true)
+      setReplyMode(false)
     } catch (error) {
       console.error('Failed to add comment:', error)
     }
   }
+
   const onSubmit = async ({ reply }: CommentReply): Promise<void> => {
     handleAddComment(comment.comment_id, { reply })
     reset()
   }
   return (
-    <>
+    <Box>
       <ListItem key={singleComment.comment_id}>
-        <Typography variant='body2'>{singleComment.comment_text}</Typography>
+        <Typography
+          variant='body2'
+          width='40%'
+          height='auto'
+          display='flex'
+          justifyContent='center'
+        >
+          {singleComment.comment_text}
+        </Typography>
+
         {singleComment.hasChild && (
           <IconButton size='small' onClick={handleToggle}>
             {isOpen ? <ArrowDropUp /> : <ArrowDropDown />}
           </IconButton>
         )}
         {isLoggedIn &&
+          !replyMode &&
           user &&
           (user.id === singleComment.userId ||
             user.roles.includes(Roles.Admin)) && (
-            <>
+            <Stack
+              direction='row'
+              display='flex'
+              justifyContent='space-around'
+              width='40%'
+            >
               {user.id === singleComment.userId && (
-                <IconButton size='small' onClick={handleEdit}>
-                  <Edit />
-                </IconButton>
+                <EditComment
+                  commentId={comment.comment_id}
+                  setText={setText}
+                  initialText={comment.comment_text}
+                  onEditSuccess={() =>
+                    editComment(parentId, comment.comment_id, text)
+                  }
+                />
               )}
               <DeleteComment
                 commentId={singleComment.comment_id}
@@ -162,7 +191,12 @@ export const CommentComponent = ({
                   removeComment(parentId, singleComment.comment_id)
                 }
               />
-            </>
+              {isLoggedIn && !replyMode && (
+                <Button variant='outlined' onClick={() => setReplyMode(true)}>
+                  Reply
+                </Button>
+              )}
+            </Stack>
           )}
       </ListItem>
 
@@ -207,27 +241,36 @@ export const CommentComponent = ({
         ) : null}
       </Collapse>
 
-      {isLoggedIn && (
+      {isLoggedIn && replyMode && (
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container alignItems='center' spacing={2} m={2}>
-            <Grid item xs={12} sm={9} md={10}>
-              <TextField
-                label='Add Comment'
+          <Stack direction='column'>
+            <TextField
+              label='Add Comment'
+              variant='outlined'
+              margin='normal'
+              fullWidth
+              id='reply'
+              {...register('reply')}
+              autoComplete='off'
+            />
+            <Stack
+              direction='row'
+              spacing={2}
+              display='flex'
+              justifyContent='space-around'
+            >
+              <Button color='primary' type='submit' variant='outlined'>
+                Send
+              </Button>
+              <Button
+                color='primary'
                 variant='outlined'
-                margin='normal'
-                fullWidth
-                id='reply'
-                {...register('reply')}
-                autoComplete='off'
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={3} md={2}>
-              <IconButton color='primary' type='submit'>
-                <Send />
-              </IconButton>
-            </Grid>
-          </Grid>
+                onClick={() => setReplyMode(false)}
+              >
+                Cancel
+              </Button>
+            </Stack>
+          </Stack>
         </form>
       )}
       {!isLoggedIn && (
@@ -239,6 +282,6 @@ export const CommentComponent = ({
           Please login to reply.
         </Typography>
       )}
-    </>
+    </Box>
   )
 }
