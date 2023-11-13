@@ -8,42 +8,50 @@ import { Post } from '../Types/Responses/Post/GetAllPostsResponse'
 import { formatDate } from '../Utils/DateFormat'
 import BlankImage from '../Assets/blankImage.png'
 import { Link } from 'react-router-dom'
+import { Chip, Stack } from '@mui/material'
 
-export function PostCard(post: Post) {
+export function PostCard({
+  imageUrl,
+  title,
+  id,
+  createdAt,
+  isDraft,
+  isPrivate,
+  user: { id: userId, userName },
+  category: { name: categoryName },
+}: Post) {
   return (
     <Card variant='outlined' sx={{ width: '100%' }}>
       <CardOverflow>
         <AspectRatio ratio='2'>
           <img
-            src={
-              post.imageUrl && post.imageUrl.length > 0
-                ? post.imageUrl
-                : BlankImage
-            }
+            src={imageUrl && imageUrl.length > 0 ? imageUrl : BlankImage}
             srcSet='https://images.unsplash.com/photo-1532614338840-ab30cf10ed36?auto=format&fit=crop&w=318&dpr=2 2x'
             loading='lazy'
-            alt={post.title}
+            alt={title}
           />
         </AspectRatio>
       </CardOverflow>
       <CardContent>
-        <Link to={`/posts/${post.id}`} className='noUnderline'>
-          <Typography level='title-md'>
-            {post.title.toLocaleUpperCase()}{' '}
-          </Typography>
-          <Typography level='body-sm'>{post.category.name}</Typography>
+        <Link to={`/posts/${id}`} className='noUnderline'>
+          <Typography level='title-md'>{title.toLocaleUpperCase()} </Typography>
+          <Stack spacing={2} direction='row' display='flex'>
+            <Chip label={categoryName} />
+            {isDraft && <Chip label='Draft' />}
+            {isPrivate && <Chip label='Private' />}
+          </Stack>
         </Link>
       </CardContent>
       <CardOverflow variant='soft' sx={{ bgcolor: 'background.level1' }}>
         <Divider inset='context' />
         <CardContent orientation='horizontal'>
-          <Link to={`/users/${post.user.id}`} className='noUnderline'>
+          <Link to={`/users/${userId}`} className='noUnderline'>
             <Typography
               level='body-xs'
               fontWeight='md'
               textColor='text.secondary'
             >
-              Author: {post.user.userName}
+              Author: {userName}
             </Typography>
           </Link>
 
@@ -53,7 +61,7 @@ export function PostCard(post: Post) {
             fontWeight='md'
             textColor='text.secondary'
           >
-            {formatDate(post.createdAt)}
+            {formatDate(createdAt)}
           </Typography>
         </CardContent>
       </CardOverflow>

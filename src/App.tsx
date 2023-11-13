@@ -23,6 +23,7 @@ const LoginPage = lazy(() => import('./Pages/LoginPage'))
 const ProfilePage = lazy(() => import('./Pages/ProfilePage'))
 const SignUpPage = lazy(() => import('./Pages/SignUpPage'))
 const SettingsPage = lazy(() => import('./Pages/SettingsPage'))
+const MyPostsPage = lazy(() => import('./Pages/MyPosts'))
 
 const App = () => {
   return (
@@ -78,6 +79,10 @@ const App = () => {
                         <Route
                           path={RoutesEnum.CreatePost}
                           element={<CreatePost />}
+                        />
+                        <Route
+                          path={RoutesEnum.MyPosts}
+                          element={<MyPostsPage />}
                         />
                         <Route
                           path={RoutesEnum.UpdatePost}

@@ -15,6 +15,8 @@ export interface Post {
   createdAt: string
   updatedAt: string
   imageUrl: string
+  isDraft: boolean
+  isPrivate: boolean
   category: Category
   user: User
 }

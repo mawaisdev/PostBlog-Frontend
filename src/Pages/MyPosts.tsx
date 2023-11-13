@@ -1,48 +1,44 @@
 import { Box, Grid, Pagination, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
-import axios from '../Api/axios'
+
+import { useAxiosPrivate } from '../Hooks/useAxiosPrivate'
+import { AxiosError } from 'axios'
 import { GetAllPostsResponse } from '../Types/Responses/Post/GetAllPostsResponse'
 import { PostCard } from '../Components/PostCard'
-import { AxiosError } from 'axios'
-import { useComments } from '../Contexts/CommentsContext'
-const PostsPage = () => {
+
+const MyPostsPage = () => {
   const [allPosts, setAllPosts] = useState<GetAllPostsResponse>()
   const [page, setPage] = useState(1)
   const pageSize = 10
-  const { setComments } = useComments()
+  const axiosPrivate = useAxiosPrivate()
 
   useEffect(() => {
     let isMounted = true
     const conntroller = new AbortController()
-    const skipValue = (page - 1) * pageSize
-    const takeValue = pageSize
 
-    const getAllPosts = async () => {
+    const getAllUserPosts = async () => {
       try {
-        const { data } = await axios.get('/posts', {
-          params: {
-            skip: skipValue,
-            take: takeValue,
-          },
-          signal: conntroller.signal,
-        })
-        if (isMounted) {
+        const { data } = await axiosPrivate.get<GetAllPostsResponse>(
+          '/myposts',
+          {
+            signal: conntroller.signal,
+          }
+        )
+
+        if (isMounted && data.data.length != 0) {
           setAllPosts(data)
-          setComments({})
-          console.log('Data from Get All Posts: ', data.data)
-          console.log('Total Posts Count: ', data.totalPostsCount)
         }
       } catch (error: AxiosError | any) {
         console.log('error', error)
       }
     }
-    getAllPosts()
+    getAllUserPosts()
 
     return () => {
       isMounted = false
       conntroller.abort()
     }
-  }, [page, pageSize])
+  }, [])
 
   return (
     <>
@@ -56,26 +52,21 @@ const PostsPage = () => {
         </Grid>
       ) : (
         <Box display='flex' justifyContent='center' marginTop={4}>
-          <Typography variant='h5'>No Posts Yet</Typography>
+          <Typography variant='h5'>You have not posted yet.</Typography>
         </Box>
       )}
 
-      {allPosts && allPosts.data.length > 0 && (
+      {allPosts?.totalPostsCount && (
         <Box display='flex' justifyContent='center' marginTop={4}>
-          <div id='paginationSection'>
-            <Pagination
-              count={Math.max(
-                1,
-                Math.ceil(allPosts.totalPostsCount / pageSize)
-              )}
-              page={page}
-              onChange={(_, value) => setPage(value)}
-            />
-          </div>
+          <Pagination
+            count={Math.ceil(allPosts.totalPostsCount / pageSize)}
+            page={page}
+            onChange={(_, value) => setPage(value)}
+          />
         </Box>
       )}
     </>
   )
 }
 
-export default PostsPage
+export default MyPostsPage

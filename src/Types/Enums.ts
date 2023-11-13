@@ -2,8 +2,9 @@ export enum MenuItems {
   Dashboard = 'Dashboard',
   Categories = 'Categories',
   Posts = 'Posts',
-  CreatePost = 'CreatePost',
-  UpdatePost = 'UpdatePost',
+  CreatePost = 'Create Post',
+  UpdatePost = 'Update Post',
+  MyPosts = 'My Posts',
   Profile = 'Profile',
   Settings = 'Settings',
   Home = 'Home',
@@ -27,4 +28,5 @@ export enum Routes {
   PostWithId = '/posts/:id',
   UserWithId = '/users/:id',
   Unauthorized = '/unauthorized',
+  MyPosts = '/myposts',
 }

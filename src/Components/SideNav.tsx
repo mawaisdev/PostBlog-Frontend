@@ -18,6 +18,7 @@ import { useAuth } from '../Hooks/useAuth'
 import {
   AccountCircleOutlined,
   Add,
+  Assessment,
   CategoryOutlined,
   ChevronLeft,
   ChevronRight,
@@ -131,6 +132,12 @@ export const SideNav = ({ children }: SideNavProps) => {
                   icon={<Add />}
                   heading={MenuItems.CreatePost}
                   handleClick={() => navigate(Routes.CreatePost)}
+                />
+                <NavListItem
+                  open={open}
+                  icon={<Assessment />}
+                  heading={MenuItems.MyPosts}
+                  handleClick={() => navigate(Routes.MyPosts)}
                 />
                 {token && user?.roles === Roles.Admin ? (
                   <>
