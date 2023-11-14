@@ -32,6 +32,7 @@ interface CommentProps {
   parentId: number | null
   isLoggedIn: boolean
   createdBy: number
+  depth: number // Added depth prop to track the level of nesting
 }
 
 export const CommentComponent = ({
@@ -39,6 +40,7 @@ export const CommentComponent = ({
   postId,
   isLoggedIn,
   parentId,
+  depth = 0,
 }: CommentProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const { register, handleSubmit, reset }: UseFormReturn<CommentReply> =
@@ -57,7 +59,6 @@ export const CommentComponent = ({
     editComment,
   } = useComments()
   const { user } = useAuth()
-  const [text, setText] = useState('')
 
   const handleShowMore = async (
     parentId: number | null = null,
@@ -141,13 +142,19 @@ export const CommentComponent = ({
       console.error('Failed to add comment:', error)
     }
   }
-
+  const onEditSuccess = (editedText: string) => {
+    editComment(parentId, comment.comment_id, editedText)
+    setSingleComment({
+      ...singleComment,
+      comment_text: editedText,
+    })
+  }
   const onSubmit = async ({ reply }: CommentReply): Promise<void> => {
     handleAddComment(comment.comment_id, { reply })
     reset()
   }
   return (
-    <Box>
+    <Box sx={{ marginLeft: `${depth * 4}px` }}>
       <ListItem key={singleComment.comment_id}>
         <Typography
           variant='body2'
@@ -177,12 +184,10 @@ export const CommentComponent = ({
             >
               {user.id === singleComment.userId && (
                 <EditComment
-                  commentId={comment.comment_id}
-                  setText={setText}
+                  postId={postId}
+                  comment={comment}
                   initialText={comment.comment_text}
-                  onEditSuccess={() =>
-                    editComment(parentId, comment.comment_id, text)
-                  }
+                  onEditSuccess={onEditSuccess}
                 />
               )}
               <DeleteComment
@@ -212,6 +217,7 @@ export const CommentComponent = ({
               parentId={singleComment.comment_id}
               isLoggedIn={isLoggedIn}
               createdBy={singleComment.userId}
+              depth={depth + 1} // Increment the depth for nested comments
               key={childComment.comment_id} // Add this key prop
             />
           </div>

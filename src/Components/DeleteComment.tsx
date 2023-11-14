@@ -45,7 +45,12 @@ const DeleteComment: React.FC<DeleteCommentProps> = ({
 
   return (
     <>
-      <Button size='small' onClick={openDeleteDialog} variant='outlined'>
+      <Button
+        size='small'
+        onClick={openDeleteDialog}
+        variant='outlined'
+        color='error'
+      >
         <Delete /> Delete
       </Button>
 

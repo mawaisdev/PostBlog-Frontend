@@ -23,7 +23,7 @@ const LoginPage = () => {
   const { setAuthState, setPersistState } = useAuth() // Get the setAuthState from your context
   const navigate = useNavigate() // Get the navigate function from react-router
   const location = useLocation() // Get the location object from react-router
-  const from = location.state?.from?.pathname || '/dashboard' // Get the previous path from location.state.from.pathname
+  const from = location.state?.from?.pathname || '/posts' // Get the previous path from location.state.from.pathname
 
   const {
     register,

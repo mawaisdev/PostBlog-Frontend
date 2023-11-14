@@ -29,8 +29,6 @@ const PostsPage = () => {
         if (isMounted) {
           setAllPosts(data)
           setComments({})
-          console.log('Data from Get All Posts: ', data.data)
-          console.log('Total Posts Count: ', data.totalPostsCount)
         }
       } catch (error: AxiosError | any) {
         console.log('error', error)

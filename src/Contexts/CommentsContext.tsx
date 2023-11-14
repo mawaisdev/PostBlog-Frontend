@@ -177,7 +177,6 @@ export const CommentsProvider = ({
           )
 
           paginatedComments.data = updatedData
-
           return updatedCommentsState
         }
       } else {

@@ -277,6 +277,7 @@ export const Post = () => {
               postId={postData.data?.id}
               createdBy={comment.userId}
               parentId={null}
+              depth={0}
             />
           ))}
         </List>
