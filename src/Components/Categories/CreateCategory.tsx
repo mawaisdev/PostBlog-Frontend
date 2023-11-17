@@ -7,16 +7,18 @@ import { ResponsiveCircularProgress } from '../ResponsiveCircularProgress'
 import { useAxiosPrivate } from '../../Hooks/useAxiosPrivate'
 import { AxiosError } from 'axios'
 import { CreateCategoryType } from '../../Types/Responses/Category/CreateCategory'
-import { useCategories } from '../../Contexts/CategoryContext'
 import { Category } from '../../Types/Responses/Category/Category'
 
-export const CreateCategory = () => {
+export const CreateCategory = ({
+  setCategories,
+}: {
+  setCategories: React.Dispatch<React.SetStateAction<Category[]>>
+}) => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [success, setSuccess] = useState<boolean>(false)
   const [message, setMessage] = useState<string | undefined>(undefined)
   // Fetch axiosPrivate instance here
   const axiosPrivate = useAxiosPrivate()
-  const { setCategories } = useCategories()
 
   const {
     register,

@@ -9,16 +9,20 @@ import {
 } from '@mui/material'
 import { useAxiosPrivate } from '../../Hooks/useAxiosPrivate'
 import { AxiosError } from 'axios'
-import { useCategories } from '../../Contexts/CategoryContext'
+import { Category } from '../../Types/Responses/Category/Category'
 
 type DeleteProps = {
   id: number
   message: string
+  setCategories: React.Dispatch<React.SetStateAction<Category[]>>
 }
 
-export const DeleteButton: React.FC<DeleteProps> = ({ id, message }) => {
+export const DeleteButton: React.FC<DeleteProps> = ({
+  id,
+  message,
+  setCategories,
+}) => {
   const axiosPrivate = useAxiosPrivate()
-  const { setCategories } = useCategories()
   const [open, setOpen] = useState(false)
 
   const handleClickOpen = () => {

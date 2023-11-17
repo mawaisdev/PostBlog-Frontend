@@ -13,21 +13,24 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { categoryData, categorySchema } from '../../Types/Schema/CategorySchema'
 import { useAxiosPrivate } from '../../Hooks/useAxiosPrivate'
 import { AxiosError } from 'axios'
-import { useCategories } from '../../Contexts/CategoryContext'
+import { Category } from '../../Types/Responses/Category/Category'
 
 interface CategoryUpdateData extends categoryData {
   id: number
 }
 interface UpdateCategoryProps {
   category: CategoryUpdateData
+  categories: Category[]
+  setCategories: React.Dispatch<React.SetStateAction<Category[]>>
 }
 
 export const UpdateCategoryDialog: React.FC<UpdateCategoryProps> = ({
   category,
+  categories,
+  setCategories,
 }) => {
   const [open, setOpen] = useState(false)
   const axiosPrivate = useAxiosPrivate()
-  const { categories, setCategories } = useCategories()
 
   const {
     register,

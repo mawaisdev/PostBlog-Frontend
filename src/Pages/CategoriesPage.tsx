@@ -1,7 +1,10 @@
 import { Grid, Paper } from '@mui/material'
 import { CreateCategory } from '../Components/Categories/CreateCategory'
 import { CategoriesTable } from '../Components/Categories/CategoriesTable'
+import { useState } from 'react'
+import { Category } from '../Types/Responses/Category/Category'
 const CategoriesPage = () => {
+  const [categories, setCategories] = useState<Category[]>([])
   return (
     <Grid container spacing={2} sx={{ minWidth: '440px' }}>
       {/* First Row */}
@@ -15,7 +18,10 @@ const CategoriesPage = () => {
               overflow: 'auto', // Add this to make the content scrollable
             }}
           >
-            <CategoriesTable />
+            <CategoriesTable
+              categories={categories}
+              setCategories={setCategories}
+            />
           </Paper>
         </Grid>
 
@@ -30,7 +36,7 @@ const CategoriesPage = () => {
               gap: { xs: 1, md: 2 },
             }}
           >
-            <CreateCategory />
+            <CreateCategory setCategories={setCategories} />
           </Paper>
         </Grid>
       </Grid>
